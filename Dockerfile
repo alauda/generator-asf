@@ -11,4 +11,4 @@ USER node
 
 WORKDIR /yo
 
-CMD ["yo", "--no-insight", "asf", "--config /yo/.asfconfig"]
+CMD ["yo", "--no-insight", "asf", "--config", ".asfconfig"]
