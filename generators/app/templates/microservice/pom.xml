@@ -69,13 +69,13 @@
 			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
-	<%_ if (messageQueueType === 'RABBIT_MQ') { -%>
+	<%_ if (messageQueueType == 'RABBIT_MQ') { -%>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-rabbit</artifactId>
 		</dependency>
 	<%_ } -%>
-	<%_ if (messageQueueType === 'KAFKA') { -%>
+	<%_ if (messageQueueType == 'KAFKA') { -%>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-kafka</artifactId>
