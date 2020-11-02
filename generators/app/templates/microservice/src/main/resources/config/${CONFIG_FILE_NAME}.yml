@@ -31,8 +31,7 @@ data:
       cloud:
         stream:
           bindings:
-            #默认消息通道名称
-            defaultChannel:
+            DEMO_QUEUE: #消息通道名称
               #消息组名称
               group: demo
               #exchange 名称，会自动创建 DEMO_QUEUE.demo 的队列
