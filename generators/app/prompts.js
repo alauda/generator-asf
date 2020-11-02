@@ -246,7 +246,7 @@ const prompts = [
         validate: (input,props) => {
             if(!input) return true;
             let mqType = props.messageQueueType == "RABBIT_MQ" ? "RabbitMQ":"Kafka";
-            if(!/^[a-z]+[a-z0-9\-_]*[a-z0-9]+$/.test(input)){
+            if(!/^[a-zA-Z]+[a-zA-Z0-9\-_]*[a-zA-Z0-9]+$/.test(input)){
                 return chalk.red(`${mqType} 密码只能包含字母、数字短线（-）或者下划线（_），且必须以英文字母开头，英文字母或数字结尾`);
             }
             return true;
