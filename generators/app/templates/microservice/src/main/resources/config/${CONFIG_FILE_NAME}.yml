@@ -1,0 +1,100 @@
+<%_ if (configServerEnabled && configServerType == 'K8S') { -%>
+#请将此 ConfigMap 添加至 K8S 集群的 <%= k8sNamespace %> 命名空间下
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: <%= PROJECT_NAME %>
+data:
+  application.yml: |-
+    spring:
+      <%_ if (messageQueueType=='RABBIT_MQ') { -%>
+      #RabbitMQ 配置
+      rabbitmq:
+        #RabbitMQ 主机名
+        host: <%= MESSAGE_QUEUE_HOST || "#请输入 RabbitMQ 主机名" %>
+        #RabbitMQ 访问端口
+        port: <%= MESSAGE_QUEUE_PORT || "#请输入 RabbitMQ 端口号" %>
+        #RabbitMQ 虚拟主机
+        virtual-host: /
+        #RabbitMQ 用户名
+        username: <%= MESSAGE_QUEUE_USERNAME || "#请输入 RabbitMQ 用户名" %>
+        #RabbitMQ 密码
+        password: <%= MESSAGE_QUEUE_PASSWORD || "#请输入 RabbitMQ 密码" %>
+      <%_ } -%>
+      <%_ if (messageQueueType=='KAFKA') { -%>
+      kafka:
+        #Kafka 地址
+        bootstrap-servers: <%= MESSAGE_QUEUE_HOST && MESSAGE_QUEUE_PORT || "#请输入 Kafka 主机名:Kafka 端口号" %>
+      <%_ } -%>
+      <%_ if (messageQueueEnabled) { -%>
+      #Spring Cloud Stream 配置
+      cloud:
+        stream:
+          bindings:
+            #默认消息通道名称
+            defaultChannel:
+              #消息组名称
+              group: demo
+              #exchange 名称，会自动创建 DEMO_QUEUE.demo 的队列
+              destination: DEMO_QUEUE
+              #消息数据内容类型
+              content-type: application/json
+      <%_ } -%>
+    <% if (tracingEnabled) { -%>
+    #调用链配置
+    opentracing:
+      jaeger:
+        udp-sender:
+          #Jaeger主机名
+          host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
+          #Jaeger端口号
+          port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
+    <% } -%>
+<%_ }else{ -%>
+#请将此文件内容添加至 Consul Key/Value 中 config/<%= PROJECT_NAME %>/data 配置路径下
+spring:
+  <%_ if (messageQueueType=='RABBIT_MQ') { -%>
+  #RabbitMQ 配置
+  rabbitmq:
+    #RabbitMQ 主机名
+    host: <%= MESSAGE_QUEUE_HOST || "#请输入 RabbitMQ 主机名" %>
+    #RabbitMQ 访问端口
+    port: <%= MESSAGE_QUEUE_PORT || "#请输入 RabbitMQ 端口号" %>
+    #RabbitMQ 虚拟主机
+    virtual-host: /
+    #RabbitMQ 用户名
+    username: <%= MESSAGE_QUEUE_USERNAME || "#请输入 RabbitMQ 用户名" %>
+    #RabbitMQ 密码
+    password: <%= MESSAGE_QUEUE_PASSWORD || "#请输入 RabbitMQ 密码" %>
+  <%_ } -%>
+  <%_ if (messageQueueType=='KAFKA') { -%>
+  kafka:
+    #Kafka 地址
+    bootstrap-servers: <%= MESSAGE_QUEUE_HOST && MESSAGE_QUEUE_PORT || "#请输入 Kafka 主机名:Kafka 端口号" %>
+  <%_ } -%>
+  <%_ if (messageQueueEnabled) { -%>
+  #Spring Cloud Stream 配置
+  cloud:
+    stream:
+      bindings:
+        #默认消息通道名称
+        defaultChannel:
+          #消息组名称
+          group: demo
+          #exchange 名称，会自动创建 DEMO_QUEUE.demo 的队列
+          destination: DEMO_QUEUE
+          #消息数据内容类型
+          content-type: application/json
+  <%_ } -%>
+<% if (tracingEnabled) { -%>
+#调用链配置
+opentracing:
+  jaeger:
+    udp-sender:
+      #Jaeger主机名
+      host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
+      #Jaeger端口号
+      port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
+<% } -%>
+<%_ } -%>
+
