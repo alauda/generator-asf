@@ -1,9 +1,6 @@
 # generator-asf [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage percentage][coveralls-image]][coveralls-url]
 > 
 
-
-
-
 ## Installation 
 
 install [Yeoman](http://yeoman.io) and generator-asf using [npm](https://www.npmjs.com/) (we assume you have pre-installed [node.js](https://nodejs.org/)).
@@ -13,10 +10,51 @@ npm install -g yo
 npm install -g generator-asf
 ```
 
-Then generate your new project:
+Then generate your new microservice:
 
 ```bash
 asf create-service
+```
+
+Or generate your new gateway:
+
+```bash
+asf create-gateway
+```
+
+## Persistent configuration
+
+Specify file for persistent configuaration:
+
+```bash
+asf create-service -c asf.json
+```
+File asf.conf will be generated with all options.
+Execute the same command will run with options in it.
+
+## Run in docker
+
+generate microservice:
+
+```bash
+docker run --rm -it \
+	-v $PWD:/yo dwgao/generator-asf \
+	asf create-service
+```
+generate gateway:
+
+```bash
+docker run --rm -it \
+	-v $PWD:/yo dwgao/generator-gateway \
+	asf create-gateway
+```
+with persistent configuration:
+
+```bash
+docker run --rm -it \
+	-v ~/conf:/conf \
+	-v $PWD:/yo dwgao/generator-asf \
+	asf create-service -c /conf/asf.conf
 ```
 
 ## Getting To Know Yeoman
