@@ -84,7 +84,7 @@ spring:
           #消息数据内容类型
           content-type: application/json
   <%_ } -%>
-<% if (tracingEnabled) { -%>
+<%_ if (tracingEnabled) { -%>
 #调用链配置
 opentracing:
   jaeger:
@@ -93,6 +93,6 @@ opentracing:
       host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
       #Jaeger端口号
       port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
-<% } -%>
+<%_ } -%>
 <%_ } -%>
 

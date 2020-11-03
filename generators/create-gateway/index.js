@@ -38,7 +38,7 @@ module.exports = class extends Generator {
             this.props = await this.prompt({
                 type: 'confirm',
                 name: 'bootstrap',
-                message: '确认开始创建一个微服务工程吗？',
+                message: '确认开始创建一个微服务网关工程吗？',
                 default: true
             });
 
@@ -109,7 +109,7 @@ module.exports = class extends Generator {
 
     writing() {
         if(!this.props.bootstrap) return;
-        return this._writeTpl('microservice');
+        return this._writeTpl('gateway');
     }
 
     end() {

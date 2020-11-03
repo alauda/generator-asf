@@ -1,0 +1,30 @@
+spring:
+  application:
+    #服务名称
+    name: <%= PROJECT_NAME %>
+  <%_ if (DISCOVERY_ENABLED) { -%>
+  #Consul 配置
+  cloud:
+    consul:
+      #Consul 主机名
+      host: <%= CONSUL_HOST || "#请输入 Consul 主机名" %>
+      #Consul 端口号
+      port: <%= CONSUL_PORT || "#请输入 Consul 端口号"%>
+      <%_ if (CONSUL_TOKEN) { -%>
+      #Consul 注册发现配置
+      discovery:
+        #Consul 凭据
+        acl-token: <%= CONSUL_TOKEN %>
+      <%_ } -%>
+      <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'CONSUL') { -%>
+      config:
+        <%_ if (CONSUL_TOKEN) { -%>
+        #Consul 凭据
+        acl-token: <%= CONSUL_TOKEN %>
+        <%_ } -%>
+        #是否动态拉取配置
+        watch:
+          enabled: true
+      <%_ } -%>
+  <%_ } -%>
+
