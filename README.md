@@ -24,8 +24,6 @@ asf create-gateway
 
 ## Persistent configuration
 
-Specify file for persistent configuaration:
-
 ```bash
 asf create-service -c asf.json
 ```
