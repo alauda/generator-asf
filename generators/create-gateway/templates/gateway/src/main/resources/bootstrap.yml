@@ -26,5 +26,17 @@ spring:
         watch:
           enabled: true
       <%_ } -%>
+    <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'K8S') { -%>
+    kubernetes:
+      #使用 Kubernetes 作为配置中心
+      config:
+        #配置名称
+        name: default
+        #K8S 命名空间
+        namespace: <%= K8S_NAMESPACE %>
+        sources:
+          #ConfigMap 名称
+          - name: <%= PROJECT_NAME %>
+    <%_ } -%>
   <%_ } -%>
 
