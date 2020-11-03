@@ -1,6 +1,6 @@
 const chalk = require('chalk');
 
-const serviceType = props => props.serviceType == "microservice"?"应用":"网关";
+const serviceType = props => "微服务";
 
 const prompts = [
 	{
@@ -52,15 +52,6 @@ const prompts = [
             return true;
         }
     },{
-		type: "list",
-		name: "serviceType",
-		message: "请选择您的应用类型：",
-		choices: [
-			{ value: "microservice",name: "Spring Cloud 业务应用"},
-			{ value: "gateway", name: "Spring Cloud 网关应用（Spring Cloud Gateway）"},
-		],
-		default: "microservice"
-	},{
 		type: "confirm",
 		name: "circuitBreakerEnabled",
 		message: props => `您的${serviceType(props)}是否需要支持熔断降级？`,
