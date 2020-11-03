@@ -1,4 +1,5 @@
-# Getting Started
+# <%= projectName %>
+## <%= projectDescribe %>
 
 ### Reference Documentation
 For further reference, please consider the following sections:

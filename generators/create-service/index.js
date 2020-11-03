@@ -127,18 +127,18 @@ module.exports = class extends Generator {
                 this.log(chalk.green("脚手架已为您完成所有依赖的添加，您可能还需要根据实际开发环境完成配置文件修改。"))
                 if(this.props.configServerEnabled){
                     let configPath = chalk.hex("#34AFE4")(`【${this.props.projectName}/src/main/resources/config/application.yml】`)
-                    let kv = chalk.hex("#34AFE4")(`【${this.props.projectName}/data】`);
+                    let kv = chalk.hex("#34AFE4")(`【config/${this.props.projectName}/data】`);
                     if(this.props.configServerType == 'K8S'){
                         configPath = chalk.hex("#34AFE4")(`【${this.props.projectName}/src/main/resources/config/configmap.yml】`)
                         let namespace = chalk.hex("#34AFE4")(`【${this.props.k8sNamespace}】`);
                         let configmap = chalk.hex("#34AFE4")(`【${this.props.projectName}】`);
-                        this.log(`${chalk.yellow('请将配置文件')} ${configPath} ${chalk.yellow('提交至 Kubernetes 集群的 ')} ${namespace} ${chalk.yellow('命名空间下')} ${configmap} ${chalk.yellow('ConfigMap 中')}`)
+                        this.log(`${chalk.yellow('请将配置文件')}${configPath}${chalk.yellow('提交至 Kubernetes 集群的 ')}${namespace}${chalk.yellow('命名空间下')}${configmap}${chalk.yellow('ConfigMap 中')}`)
                     }else{
-                        this.log(`${chalk.yellow('请将配置文件')} ${configPath} ${chalk.yellow('提交至 Consul 的 ')} ${kv} ${chalk.yellow('Key/Value 配置中')}`)
+                        this.log(`${chalk.yellow('请将配置文件')}${configPath}${chalk.yellow('提交至 Consul 的 ')}${kv}${chalk.yellow('Key/Value 配置中')}`)
                     }
                 }
                 
-                this.log(chalk.green("祝您开发顺利！如对脚手架有任何建议，您可以通过提 github issues(<github 项目地址>) 或发送邮件到 suggest@alauda.io 进行反馈，我们会及时回复并处理。"))
+                this.log(chalk.green("祝您开发顺利！如对脚手架有任何建议，您可以通过提 github issues(https://github.com/madogao/generator-asf) 或发送邮件到 suggest@alauda.io 进行反馈，我们会及时回复并处理。"))
                 chalk.reset();
                 process.exit(0);
             }

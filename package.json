@@ -1,6 +1,6 @@
 {
   "name": "generator-asf",
-  "version": "0.0.12",
+  "version": "0.0.14",
   "description": "",
   "homepage": "",
   "author": {
@@ -39,6 +39,7 @@
     "decamelize": "^4.0.0",
     "uppercamelcase": "^3.0.0",
     "walk": "^2.3.14",
+    "yeoman-environment": "^2.10.3",
     "yeoman-generator": "^2.0.1",
     "yosay": "^2.0.1"
   },
@@ -79,6 +80,9 @@
   "scripts": {
     "pretest": "eslint .",
     "test": "jest"
+  },
+  "bin": {
+    "asf": "./cli/asf.js"
   },
   "repository": "madogao/generator-asf",
   "license": "Apache-2.0"
