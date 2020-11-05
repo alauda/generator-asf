@@ -1,6 +1,6 @@
 const chalk = require("chalk");
 
-const serviceType = "微服务";
+const serviceType = _ => "微服务";
 
 const prompts = [
     {
@@ -98,10 +98,10 @@ const prompts = [
         message: "请选择您的配置中心类型：",
         when: props => props.configServerEnabled,
         choices: [
-            { value: "CONSUL", name: "Consul" },
-            { value: "K8S", name: "Kubernetes" }
+            { value: "K8S", name: "Kubernetes(推荐)" },
+            { value: "CONSUL", name: "Consul" }
         ],
-        default: "CONSUL"
+        default: "K8S"
     },
     {
         type: "input",
