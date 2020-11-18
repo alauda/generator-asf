@@ -2,13 +2,15 @@
 const Generator = require("yeoman-generator");
 const chalk = require("chalk");
 const prompts = require("./prompts");
-const uppercamelcase = require("uppercamelcase");
+const camelcase = require("camelcase");
 const decamelize = require("decamelize");
 const walk = require("walk");
 const path = require("path");
 const tree = require("tree-node-cli");
 const fs = require("fs");
 const alaudaSay = require("../../lib/alauda-say");
+const base64 = require("base64-utf8");
+const ignoreFiles = require("./ignore-files");
 
 module.exports = class extends Generator {
     constructor(args, opts) {
@@ -21,6 +23,7 @@ module.exports = class extends Generator {
             type: String
         });
 
+        this.getDockerConfigJson = this.getDockerConfigJson.bind(this);
         this._writeTpl = this._writeTpl.bind(this);
         this._translateProps = this._translateProps.bind(this);
     }
@@ -60,16 +63,45 @@ module.exports = class extends Generator {
         });
     }
 
-    _writeTpl(dirName) {
-        let { packageName, projectName } = this.props;
-        if (this.props.configServerType === "K8S") {
-            this.props.configFileName = "configmap";
-        } else {
-            this.props.configFileName = "application";
-        }
+    getDockerConfigJson() {
+        const {
+            dockerUrl,
+            dockerPort,
+            dockerUsername,
+            dockerPassword,
+            projectName
+        } = this.props;
+        if (!dockerUrl || !dockerPort || !dockerUsername || !dockerPassword)
+            return "";
+        const auth = base64.encode(`${dockerUsername}:${dockerPassword}`);
+        const authsKey = `${dockerUrl}:${dockerPort}`;
+        this.props.dockerImage = `${authsKey}/${projectName}:latest`;
+        return base64.encode(
+            JSON.stringify({
+                auths: {
+                    [authsKey]: {
+                        userName: dockerUsername,
+                        password: dockerPassword,
+                        email: "",
+                        auth
+                    }
+                }
+            })
+        );
+    }
 
-        this.props.upperProjectName = uppercamelcase(projectName);
+    _writeTpl(dirName) {
+        let { packageName, projectName, messageQueuePassword } = this.props;
+
+        this.props.upperProjectName = camelcase(projectName, {
+            pascalCase: true
+        });
+        this.props.lowerProjectName = camelcase(projectName);
         this.props.packagePath = packageName.toLowerCase().replace(/\./g, "/");
+        this.props.dockerConfigJson = this.getDockerConfigJson();
+        this.props.messageQueuePasswordBase64 = base64.encode(
+            messageQueuePassword
+        );
 
         this._translateProps();
 
@@ -85,16 +117,7 @@ module.exports = class extends Generator {
                 let destRoot = `${projectName}/${rootPath}`;
                 let destName = stat.name;
 
-                if (!me.props.messageQueueEnabled) {
-                    if (
-                        rootPath.indexOf(
-                            `src/main/java/${me.props.packagePath}/stream`
-                        ) >= 0
-                    ) {
-                        next();
-                        return;
-                    }
-                }
+                if (ignoreFiles(rootPath, me.props, next)) return;
 
                 Object.keys(me.props).forEach(key => {
                     destRoot = destRoot.replace(
@@ -146,14 +169,14 @@ module.exports = class extends Generator {
         );
         if (this.props.configServerEnabled) {
             let configPath = chalk.hex("#34AFE4")(
-                `【${this.props.projectName}/src/main/resources/config/application.yml】`
+                `【${this.props.projectName}/consul/application.yml】`
             );
             let kv = chalk.hex("#34AFE4")(
                 `【config/${this.props.projectName}/data】`
             );
             if (this.props.configServerType === "K8S") {
                 configPath = chalk.hex("#34AFE4")(
-                    `【${this.props.projectName}/src/main/resources/config/configmap.yml】`
+                    `【${this.props.projectName}/kubernetes/${this.props.projectName}.yml】`
                 );
                 let namespace = chalk.hex("#34AFE4")(
                     `【${this.props.k8sNamespace}】`
@@ -179,7 +202,9 @@ module.exports = class extends Generator {
 
         this.log(
             chalk.green(
-                "祝您开发顺利！如对脚手架有任何建议，您可以通过提 github issues(https://github.com/madogao/generator-asf) 或发送邮件到 suggest@alauda.io 进行反馈，我们会及时回复并处理。"
+                "我们还为您将这个微服务进行了 yaml 封装，您可以通过 kubectl apply 完成一键部署， yaml 文件位于 Kubernetes 目录，与工程目录同级。\n" +
+                    "\n" +
+                    "祝您开发顺利！如对脚手架有任何建议，您可以通过提 github issues(https://github.com/alauda/generator-asf) 或发送邮件到 suggest@alauda.io 进行反馈，我们会及时回复并处理。"
             )
         );
         chalk.reset();

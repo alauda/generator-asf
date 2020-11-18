@@ -17,14 +17,14 @@ public class <%= upperProjectName %>Controller {
      * Demo 服务
      */
     final
-    <%= upperProjectName %>Service <%= projectName %>Service;
+    <%= upperProjectName %>Service <%= lowerProjectName %>Service;
 
     /**
      * 构造函数
-     * @param <%= projectName %>Service
+     * @param <%= lowerProjectName %>Service
      */
-    public <%= upperProjectName %>Controller(<%= upperProjectName %>Service <%= projectName %>Service) {
-        this.<%= projectName %>Service = <%= projectName %>Service;
+    public <%= upperProjectName %>Controller(<%= upperProjectName %>Service <%= lowerProjectName %>Service) {
+        this.<%= lowerProjectName %>Service = <%= lowerProjectName %>Service;
     }
 
     /**
@@ -35,7 +35,7 @@ public class <%= upperProjectName %>Controller {
     @GetMapping("/ping")
     public String ping(){
         //响应 Ping 消息
-        return <%= projectName %>Service.ping();
+        return <%= lowerProjectName %>Service.ping();
     }
 
     <%_ if (messageQueueEnabled) { -%>
@@ -45,7 +45,7 @@ public class <%= upperProjectName %>Controller {
     @GetMapping("/ping/async")
     public String pingAsync(){
         //发送异步 Ping 消息
-        return <%= projectName %>Service.pingAsync();
+        return <%= lowerProjectName %>Service.pingAsync();
     }
     <%_ } -%>
 }

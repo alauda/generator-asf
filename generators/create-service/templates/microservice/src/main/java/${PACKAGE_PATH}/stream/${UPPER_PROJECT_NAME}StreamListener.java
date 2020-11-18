@@ -17,7 +17,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 /**
- * Spring Cloud Stream 消息监听示例代码，绑定消息通道 <%= projectName %>StreamSource
+ * Spring Cloud Stream 消息监听示例代码，绑定消息通道 <%= lowerProjectName %>StreamSource
  */
 @Slf4j
 @Component
@@ -36,20 +36,20 @@ public class <%= upperProjectName %>StreamListener {
      * 获取自动注入的 Spring Cloud Stream 消息通道
      */
     final
-    <%= upperProjectName %>StreamSource <%= projectName %>StreamSource;
+    <%= upperProjectName %>StreamSource <%= lowerProjectName %>StreamSource;
 
     /**
      * 构造函数
      <%_ if (tracingEnabled) { -%>
      * @param tracer
      <%_ } -%>
-     * @param <%= projectName %>StreamSource
+     * @param <%= lowerProjectName %>StreamSource
      */
-    public <%= upperProjectName %>StreamListener(<%_ if (tracingEnabled) { -%>Tracer tracer, <%_ } -%><%= upperProjectName %>StreamSource <%= projectName %>StreamSource) {
+    public <%= upperProjectName %>StreamListener(<%_ if (tracingEnabled) { -%>Tracer tracer, <%_ } -%><%= upperProjectName %>StreamSource <%= lowerProjectName %>StreamSource) {
         <%_ if (tracingEnabled) { -%>
         this.tracer = tracer;
         <%_ } -%>
-        this.<%= projectName %>StreamSource = <%= projectName %>StreamSource;
+        this.<%= lowerProjectName %>StreamSource = <%= lowerProjectName %>StreamSource;
     }
 
     /**
@@ -73,7 +73,7 @@ public class <%= upperProjectName %>StreamListener {
             tracer.activeSpan().finish();
         }
         //手动调用消息通道拦截器的 preSend 方法，会自动创建新的 Span 并记录在当前调用链上下文中
-        new OpenTracingChannelInterceptor(tracer).preSend(message,<%= projectName %>StreamSource.pingOutput());
+        new OpenTracingChannelInterceptor(tracer).preSend(message,<%= lowerProjectName %>StreamSource.pingOutput());
         <%_ } -%>
         //在日志中输出消息内容
         log.info(msg);

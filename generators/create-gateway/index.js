@@ -2,13 +2,15 @@
 const Generator = require("yeoman-generator");
 const chalk = require("chalk");
 const prompts = require("./prompts");
-const uppercamelcase = require("uppercamelcase");
+const camelcase = require("camelcase");
 const decamelize = require("decamelize");
 const walk = require("walk");
 const path = require("path");
 const tree = require("tree-node-cli");
 const fs = require("fs");
 const alaudaSay = require("../../lib/alauda-say");
+const base64 = require("base64-utf8");
+const ignoreFiles = require("./ignore-files");
 
 module.exports = class extends Generator {
     constructor(args, opts) {
@@ -21,6 +23,7 @@ module.exports = class extends Generator {
             type: String
         });
 
+        this.getDockerConfigJson = this.getDockerConfigJson.bind(this);
         this._writeTpl = this._writeTpl.bind(this);
         this._translateProps = this._translateProps.bind(this);
     }
@@ -60,16 +63,44 @@ module.exports = class extends Generator {
         });
     }
 
-    _writeTpl(dirName) {
-        let { packageName, projectName } = this.props;
-        if (this.props.configServerType === "K8S") {
-            this.props.configFileName = "configmap";
-        } else {
-            this.props.configFileName = "application";
-        }
+    getDockerConfigJson() {
+        const {
+            dockerUrl,
+            dockerPort,
+            dockerUsername,
+            dockerPassword,
+            projectName
+        } = this.props;
+        if (!dockerUrl || !dockerPort || !dockerUsername || !dockerPassword)
+            return "";
+        const auth = base64.encode(`${dockerUsername}:${dockerPassword}`);
+        const authsKey = `${dockerUrl}:${dockerPort}`;
+        this.props.dockerImage = `${authsKey}/${projectName}:latest`;
+        return base64.encode(
+            JSON.stringify({
+                auths: {
+                    [authsKey]: {
+                        userName: dockerUsername,
+                        password: dockerPassword,
+                        email: "",
+                        auth
+                    }
+                }
+            })
+        );
+    }
 
-        this.props.upperProjectName = uppercamelcase(projectName);
+    _writeTpl(dirName) {
+        let { packageName, projectName, messageQueuePassword } = this.props;
+
+        this.props.upperProjectName = camelcase(projectName, {
+            pascalCase: true
+        });
         this.props.packagePath = packageName.toLowerCase().replace(/\./g, "/");
+        this.props.dockerConfigJson = this.getDockerConfigJson();
+        this.props.messageQueuePasswordBase64 = base64.encode(
+            messageQueuePassword
+        );
 
         this._translateProps();
 
@@ -85,16 +116,7 @@ module.exports = class extends Generator {
                 let destRoot = `${projectName}/${rootPath}`;
                 let destName = stat.name;
 
-                if (!me.props.messageQueueEnabled) {
-                    if (
-                        rootPath.indexOf(
-                            `src/main/java/${me.props.packagePath}/stream`
-                        ) >= 0
-                    ) {
-                        next();
-                        return;
-                    }
-                }
+                if (ignoreFiles(rootPath, me.props, next)) return;
 
                 Object.keys(me.props).forEach(key => {
                     destRoot = destRoot.replace(

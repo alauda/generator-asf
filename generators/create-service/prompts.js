@@ -69,6 +69,22 @@ const prompts = [
         }
     },
     {
+        type: "input",
+        name: "k8sNamespace",
+        message:
+            "请输入网关要部署的命名空间名称(如不部署在 Kubernetes 可跳过)：",
+        validate: input => {
+            if (!input) return true;
+            if (!/^[a-z]+[a-z0-9-]*[a-z0-9]+$/.test(input)) {
+                return chalk.red(
+                    "命名空间名称只能包含字母、数字短线（-），且必须以英文字母开头，英文字母或数字结尾"
+                );
+            }
+
+            return true;
+        }
+    },
+    {
         type: "confirm",
         name: "circuitBreakerEnabled",
         message: props => `您的${serviceType(props)}是否需要支持熔断降级？`,
@@ -81,10 +97,14 @@ const prompts = [
         default: true
     },
     {
-        type: "confirm",
-        name: "discoveryEnabled",
-        message: props => `您的${serviceType(props)}是否需要支持注册发现？`,
-        default: true
+        type: "list",
+        name: "discoveryServerType",
+        message: "请选择您的注册中心类型：",
+        choices: [
+            { value: "K8S", name: "Kubernetes(推荐)" },
+            { value: "CONSUL", name: "Consul" }
+        ],
+        default: "K8S"
     },
     {
         type: "confirm",
@@ -104,28 +124,10 @@ const prompts = [
         default: "K8S"
     },
     {
-        type: "input",
-        name: "k8sNamespace",
-        message: "请选择要部署 ConfigMap 的命名空间名称：",
-        when: props =>
-            props.configServerEnabled && props.configServerType === "K8S",
-        default: "default",
-        validate: input => {
-            if (!input) return chalk.red("命名空间名称不能为空");
-            if (!/^[a-z]+[a-z0-9-]*[a-z0-9]+$/.test(input)) {
-                return chalk.red(
-                    "工程名称只能包含字母、数字短线（-），且必须以英文字母开头，英文字母或数字结尾"
-                );
-            }
-
-            return true;
-        }
-    },
-    {
         type: "confirm",
         name: "tracingEnabled",
         message: props =>
-            `您的${serviceType(props)}是否需要调用链跟踪（Jagger）？`,
+            `您的${serviceType(props)}是否需要调用链跟踪（Jaeger）？`,
         default: true
     },
     {
@@ -135,7 +137,7 @@ const prompts = [
         default: true
     },
     {
-        type: "checkbox",
+        type: "list",
         name: "messageQueueType",
         message: props =>
             `请选择您的${serviceType(props)}要支持的消息队列类型：`,
@@ -152,7 +154,7 @@ const prompts = [
         message: props =>
             `是否现在开始配置您的${serviceType(
                 props
-            )}（Consul、Jagger、MQ等）？`,
+            )}(注册中心、调用链、消息队列等)？`,
         default: true
     },
     {
@@ -160,7 +162,10 @@ const prompts = [
         name: "consulHost",
         default: "",
         message: "请输入您的 Consul 访问地址（域名或IP）：",
-        when: props => props.configNow && props.discoveryEnabled,
+        when: props =>
+            props.configNow &&
+            (props.discoveryServerType === "CONSUL" ||
+                props.configServerType === "CONSUL"),
         validate: input => {
             if (!input) return true;
             if (!/^[a-z0-9-_.]+$/.test(input)) {
@@ -177,10 +182,13 @@ const prompts = [
         name: "consulPort",
         default: "",
         message: "请输入您的 Consul 端口号：",
-        when: props => props.configNow && props.discoveryEnabled,
+        when: props =>
+            props.configNow &&
+            (props.discoveryServerType === "CONSUL" ||
+                props.configServerType === "CONSUL"),
         validate: input => {
             if (!input) return true;
-            if (!/^[0-9]+$/.test(input)) {
+            if (!/^[0-9]{0,5}$/.test(input)) {
                 return chalk.red("Consul 端口号只能为0~65536的数字");
             }
 
@@ -195,8 +203,12 @@ const prompts = [
         type: "input",
         name: "consulToken",
         default: "",
-        message: "请输入您的 Consul Server Token：",
-        when: props => props.configNow && props.discoveryEnabled
+        message:
+            "请输入您的 Consul Server Token(如 Consul 未开启 ACL 可直接回车跳过这步)：",
+        when: props =>
+            props.configNow &&
+            (props.discoveryServerType === "CONSUL" ||
+                props.configServerType === "CONSUL")
     },
     {
         type: "input",
@@ -223,12 +235,12 @@ const prompts = [
         when: props => props.configNow && props.tracingEnabled,
         validate: input => {
             if (!input) return true;
-            if (!/^[0-9]+$/.test(input)) {
-                return chalk.red("Jagger 端口号只能为0~65536的数字");
+            if (!/^[0-9]{0,5}$/.test(input)) {
+                return chalk.red("Jaeger 端口号只能为0~65536的数字");
             }
 
             if (Number(input) <= 0 || Number(input) > 65536) {
-                return chalk.red("Jagger 端口号只能为0~65536的数字");
+                return chalk.red("Jaeger 端口号只能为0~65536的数字");
             }
 
             return true;
@@ -269,7 +281,7 @@ const prompts = [
             if (!input) return true;
             let mqType =
                 props.messageQueueType === "RABBIT_MQ" ? "RabbitMQ" : "Kafka";
-            if (!/^[0-9]+$/.test(input)) {
+            if (!/^[0-9]{0,5}$/.test(input)) {
                 return chalk.red(`${mqType} 端口号只能为0~65536的数字`);
             }
 
@@ -323,6 +335,62 @@ const prompts = [
             // if(!/^[a-zA-Z]+[a-zA-Z0-9-_]*[a-zA-Z0-9]+$/.test(input)){
             //     return chalk.red(`${mqType} 密码只能包含字母、数字短线（-）或者下划线（_），且必须以英文字母开头，英文字母或数字结尾`);
             // }
+            return true;
+        }
+    },
+    {
+        type: "input",
+        name: "dockerUrl",
+        default: "",
+        message: _ => "请输入您的镜像仓库地址：",
+        validate: (input, _) => {
+            if (!/^[a-z0-9]+[a-z0-9.]*[a-z0-9]+$/.test(input)) {
+                return chalk.red(
+                    "镜像仓库地址只能包含字母、数字或者.，且必须以英文字母或数字结尾"
+                );
+            }
+
+            return true;
+        }
+    },
+    {
+        type: "input",
+        name: "dockerPort",
+        default: "",
+        message: _ => "请输入您的镜像仓库端口：",
+        validate: (input, _) => {
+            if (!/^[0-9]{0,5}$/.test(input)) {
+                return chalk.red("端口号只能为0~65536的数字");
+            }
+
+            return true;
+        }
+    },
+    {
+        type: "input",
+        name: "dockerUsername",
+        default: "",
+        message: _ => "请输入您的镜像仓库用户名：",
+        validate: (input, _) => {
+            if (!/^[a-z]+[a-z0-9-_]*[a-z0-9]+$/.test(input)) {
+                return chalk.red(
+                    "用户名只能包含字母、数字短线（-）或者下划线（_），且必须以英文字母开头，英文字母或数字结尾"
+                );
+            }
+
+            return true;
+        }
+    },
+    {
+        type: "input",
+        name: "dockerPassword",
+        default: "",
+        message: _ => "请输入您的镜像仓库密码：",
+        validate: (input, _) => {
+            if (!input) {
+                return chalk.red("请输入镜像仓库密码");
+            }
+
             return true;
         }
     }

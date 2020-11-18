@@ -13,13 +13,13 @@ npm install -g generator-asf
 Then generate your new microservice:
 
 ```bash
-asf create-service
+asf create-service or asf cs
 ```
 
 Or generate your new gateway:
 
 ```bash
-asf create-gateway
+asf create-gateway or asf cg
 ```
 
 ## Persistent configuration

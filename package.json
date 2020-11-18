@@ -1,90 +1,90 @@
 {
-  "name": "generator-asf",
-  "version": "0.1.6",
-  "description": "",
-  "homepage": "",
-  "author": {
-    "name": "gaodawei",
-    "email": "dwgao@alauda.io",
-    "url": ""
-  },
-  "files": [
-    "generators",
-    "lib"
-  ],
-  "main": "generators/index.js",
-  "keywords": [
-    "",
-    "yeoman-generator"
-  ],
-  "devDependencies": {
-    "yeoman-test": "^1.7.0",
-    "yeoman-assert": "^3.1.0",
-    "coveralls": "^3.0.7",
-    "eslint": "^6.6.0",
-    "prettier": "^1.19.1",
-    "husky": "^3.0.9",
-    "lint-staged": "^9.4.3",
-    "eslint-config-prettier": "^6.6.0",
-    "eslint-plugin-prettier": "^3.1.1",
-    "eslint-config-xo": "^0.27.2",
-    "jest": "^24.8.0"
-  },
-  "engines": {
-    "npm": ">= 4.0.0"
-  },
-  "dependencies": {
-    "camelcase": "^6.1.0",
-    "chalk": "^2.1.0",
-    "decamelize": "^4.0.0",
-    "tree-node-cli": "^1.4.0",
-    "uppercamelcase": "^3.0.0",
-    "walk": "^2.3.14",
-    "yeoman-environment": "^2.10.3",
-    "yeoman-generator": "^2.0.1",
-    "yosay": "^2.0.1"
-  },
-  "jest": {
-    "testEnvironment": "node"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.json": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "eslintConfig": {
-    "extends": [
-      "xo",
-      "prettier"
-    ],
-    "env": {
-      "jest": true,
-      "node": true
+    "name": "generator-asf",
+    "version": "0.1.6",
+    "description": "",
+    "homepage": "",
+    "author": {
+        "name": "gaodawei",
+        "email": "dwgao@alauda.io",
+        "url": ""
     },
-    "rules": {
-      "prettier/prettier": "error"
+    "files": [
+        "generators",
+        "lib"
+    ],
+    "main": "generators/index.js",
+    "keywords": [
+        "",
+        "yeoman-generator"
+    ],
+    "devDependencies": {
+        "yeoman-test": "^1.7.0",
+        "yeoman-assert": "^3.1.0",
+        "coveralls": "^3.0.7",
+        "eslint": "^6.6.0",
+        "prettier": "^1.19.1",
+        "husky": "^3.0.9",
+        "lint-staged": "^9.4.3",
+        "eslint-config-prettier": "^6.6.0",
+        "eslint-plugin-prettier": "^3.1.1",
+        "eslint-config-xo": "^0.27.2",
+        "jest": "^24.8.0"
     },
-    "plugins": [
-      "prettier"
-    ]
-  },
-  "scripts": {
-    "pretest": "eslint .",
-    "test": "jest"
-  },
-  "bin": {
-    "asf": "./cli/asf.js"
-  },
-  "repository": "madogao/generator-asf",
-  "license": "Apache-2.0"
+    "engines": {
+        "npm": ">= 4.0.0"
+    },
+    "dependencies": {
+        "base64-utf8": "^0.1.8",
+        "camelcase": "^6.2.0",
+        "chalk": "^2.1.0",
+        "decamelize": "^4.0.0",
+        "tree-node-cli": "^1.4.0",
+        "walk": "^2.3.14",
+        "yeoman-environment": "^2.10.3",
+        "yeoman-generator": "^2.0.1",
+        "yosay": "^2.0.1"
+    },
+    "jest": {
+        "testEnvironment": "node"
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint --fix",
+            "git add"
+        ],
+        "*.json": [
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "eslintConfig": {
+        "extends": [
+            "xo",
+            "prettier"
+        ],
+        "env": {
+            "jest": true,
+            "node": true
+        },
+        "rules": {
+            "prettier/prettier": "error"
+        },
+        "plugins": [
+            "prettier"
+        ]
+    },
+    "scripts": {
+        "pretest": "eslint .",
+        "test": "jest"
+    },
+    "bin": {
+        "asf": "./cli/asf.js"
+    },
+    "repository": "madogao/generator-asf",
+    "license": "Apache-2.0"
 }

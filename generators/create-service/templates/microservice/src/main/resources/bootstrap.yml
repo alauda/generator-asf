@@ -2,15 +2,15 @@ spring:
   application:
     #服务名称
     name: <%= PROJECT_NAME %>
-  <%_ if (DISCOVERY_ENABLED) { -%>
-  #Consul 配置
   cloud:
+    <%_ if (CONFIG_SERVER_TYPE == 'CONSUL' || DISCOVERY_SERVER_TYPE == 'CONSUL') { -%>
+    #Consul 配置
     consul:
       #Consul 主机名
       host: <%= CONSUL_HOST || "#请输入 Consul 主机名" %>
       #Consul 端口号
       port: <%= CONSUL_PORT || "#请输入 Consul 端口号"%>
-      <%_ if (CONSUL_TOKEN) { -%>
+      <%_ if (DISCOVERY_SERVER_TYPE == 'CONSUL') { -%>
       #Consul 注册发现配置
       discovery:
         #Consul 凭据
@@ -26,5 +26,11 @@ spring:
         watch:
           enabled: true
       <%_ } -%>
-  <%_ } -%>
-
+    <%_ } -%>
+    <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'K8S') { -%>
+    kubernetes:
+      reload:
+        enabled: true
+      secrets:
+        paths: /etc/secrets/asf-secrets
+    <%_ } -%>

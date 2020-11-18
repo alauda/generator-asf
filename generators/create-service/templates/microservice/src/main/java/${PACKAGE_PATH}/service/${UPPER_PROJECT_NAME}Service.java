@@ -46,22 +46,22 @@ public class <%= upperProjectName %>Service {
      * 获取自动注入的 Spring Cloud Stream 消息通道
      */
     final
-    <%= upperProjectName %>StreamSource <%= projectName %>StreamSource;
+    <%= upperProjectName %>StreamSource <%= lowerProjectName %>StreamSource;
     <%_ } -%>
 
     <%_ if (messageQueueEnabled || tracingEnabled) { -%>
     /**
      * 构造函数
     <%_ if (messageQueueEnabled) { -%>
-     * @param <%= projectName %>StreamSource
+     * @param <%= lowerProjectName %>StreamSource
     <%_ } -%>
     <%_ if (tracingEnabled) { -%>
      * @param tracer
     <%_ } -%>
      */
-    public <%= upperProjectName %>Service(<%_ if (messageQueueEnabled) { -%><%= upperProjectName %>StreamSource <%= projectName %>StreamSource<%_ } -%><%_ if (messageQueueEnabled && tracingEnabled) { -%>, <%_ } -%><%_ if (tracingEnabled) { -%>Tracer tracer<%_ } -%>) {
+    public <%= upperProjectName %>Service(<%_ if (messageQueueEnabled) { -%><%= upperProjectName %>StreamSource <%= lowerProjectName %>StreamSource<%_ } -%><%_ if (messageQueueEnabled && tracingEnabled) { -%>, <%_ } -%><%_ if (tracingEnabled) { -%>Tracer tracer<%_ } -%>) {
         <%_ if (messageQueueEnabled) { -%>
-        this.<%= projectName %>StreamSource = <%= projectName %>StreamSource;
+        this.<%= lowerProjectName %>StreamSource = <%= lowerProjectName %>StreamSource;
         <%_ } -%>
         <%_ if (tracingEnabled) { -%>
         this.tracer = tracer;
@@ -98,11 +98,11 @@ public class <%= upperProjectName %>Service {
         }
 
         //发送注入了调用链信息的消息，调用链信息将附在消息头中发送
-        <%= projectName %>StreamSource.pingOutput()
+        <%= lowerProjectName %>StreamSource.pingOutput()
                 .send(textMap.getMessage());
         <%_ }else{ -%>
         //发送异步消息
-        <%= projectName %>StreamSource.pingOutput()
+        <%= lowerProjectName %>StreamSource.pingOutput()
                 .send(message);
         <%_ } -%>
         //响应请求

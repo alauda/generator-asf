@@ -1,0 +1,118 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: <%= DOCKER_CONFIG_JSON %>
+kind: Secret
+metadata:
+  name: asf-registry
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+type: kubernetes.io/dockerconfigjson
+<%_ if (CONFIG_SERVER_TYPE == 'K8S' || DISCOVERY_SERVER_TYPE == 'K8S') { -%>
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: asf-service
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: asf-service
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - pods
+      - services
+      - endpoints
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: asf-service
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+subjects:
+  - kind: ServiceAccount
+    name: asf-service
+    namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: asf-service
+<%_ } -%>
+---
+#请将此 ConfigMap 添加至 K8S 集群的 <%= K8S_NAMESPACE %> 命名空间下
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: <%= PROJECT_NAME %>
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+data:
+  application.yml: |-
+    #通过服务发现自动添加路由
+    spring.cloud.gateway.discovery.locator.enabled: true
+    <%_ if (tracingEnabled) { -%>
+    #调用链配置
+    opentracing:
+      jaeger:
+        udp-sender:
+          #Jaeger主机名
+          host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
+          #Jaeger端口号
+          port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
+    <%_ } -%>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <%= PROJECT_NAME %>
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  labels:
+    service.asf.io/name: <%= PROJECT_NAME %>
+spec:
+  selector:
+    matchLabels:
+      service.asf.io/name: <%= PROJECT_NAME %>
+  template:
+    metadata:
+      labels:
+        service.asf.io/name: <%= PROJECT_NAME %>
+    spec:
+      <%_ if (CONFIG_SERVER_TYPE == 'K8S' || DISCOVERY_SERVER_TYPE == 'K8S') { -%>
+      serviceAccountName: asf-service
+      <%_ } -%>
+      imagePullSecrets:
+        - name: asf-registry
+      containers:
+        - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
+          imagePullPolicy: Always
+          name: demo-service
+          resources:
+            limits:
+              cpu: '1'
+              memory: 512Mi
+            requests:
+              cpu: '1'
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: <%= PROJECT_NAME %>
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    service.asf.io/name: <%= PROJECT_NAME %>
+  type: NodePort
