@@ -64,6 +64,7 @@ module.exports = class extends Generator {
     }
 
     getDockerConfigJson() {
+        this.props.dockerImage = "";
         const {
             dockerUrl,
             dockerPort,
