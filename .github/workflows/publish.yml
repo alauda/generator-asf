@@ -1,0 +1,38 @@
+name: Publish package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Next package version. patch, minor, major or specific version.
+        required: true
+        default: patch
+
+jobs:
+  publish_package:
+    name: Publish package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install yeoman
+        run: npm install -g yo
+      - name: Install dependencies
+        run: npm install
+      - name: Update package version
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          npm release $VERSION
+        env:
+          VERSION: ${{github.event.inputs.version}}
+      - name: Publish
+        run: |
+          npm set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          npm publish release
+        env:
+          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PUSH_TOKEN }}
+          tags: true
