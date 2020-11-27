@@ -14,25 +14,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Install yeoman
-        run: npm install -g yo
       - name: Install dependencies
         run: npm install
-      - name: Update package version
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          npm release $VERSION
-        env:
-          VERSION: ${{github.event.inputs.version}}
-      - name: Publish
-        run: |
-          npm set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
-          npm publish release
-        env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - uses: actions/setup-node@v1
         with:
-          github_token: ${{ secrets.PUSH_TOKEN }}
-          tags: true
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          PACKAGE_VERSION: ${{github.event.inputs.version}}
+        run: |
+          publish="npm publish . --tag ${PACKAGE_VERSION}"
+          $publish
+#      - name: Push changes
+#        uses: alauda/generator-asf@master
+#        with:
+#          github_token: ${{ secrets.PUSH_TOKEN }}
+#          tags: true
