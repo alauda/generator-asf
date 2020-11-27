@@ -1,5 +1,17 @@
 apiVersion: v1
 data:
+    # 请根据规则填写：
+    # {
+    #   auths: {
+    #     [harborUrl]: { // 镜像仓库地址
+    #       userName: dockerUsername, // 镜像仓库用户名
+    #       password: dockerPassword, // 镜像仓库密码
+    #       email: "", // 邮箱（可以为空）
+    #       auth: base64(dockerUsername:dockerPassword) // 镜像仓库用户名:镜像仓库密码base64后的值
+    #     }
+    #   }
+    # }
+    # 以上对象转为json字符串并base64后可填入下方
   .dockerconfigjson: <%= DOCKER_CONFIG_JSON %>
 kind: Secret
 metadata:

@@ -233,8 +233,10 @@ const prompts = [
         type: "input",
         name: "dockerUrl",
         default: "",
+        when: props => props.configNow,
         message: _ => "请输入您的镜像仓库地址：",
         validate: (input, _) => {
+            if (!input) return true;
             if (!/^[a-z0-9]+[a-z0-9.]*[a-z0-9]+$/.test(input)) {
                 return chalk.red(
                     "镜像仓库地址只能包含字母、数字或者.，且必须以英文字母或数字结尾"
@@ -248,8 +250,10 @@ const prompts = [
         type: "input",
         name: "dockerPort",
         default: "",
+        when: props => props.configNow,
         message: _ => "请输入您的镜像仓库端口：",
         validate: (input, _) => {
+            if (!input) return true;
             if (!/^[0-9]{0,5}$/.test(input)) {
                 return chalk.red("端口号只能为0~65536的数字");
             }
@@ -261,8 +265,10 @@ const prompts = [
         type: "input",
         name: "dockerUsername",
         default: "",
+        when: props => props.configNow,
         message: _ => "请输入您的镜像仓库用户名：",
         validate: (input, _) => {
+            if (!input) return true;
             if (!/^[a-z]+[a-z0-9-_]*[a-z0-9]+$/.test(input)) {
                 return chalk.red(
                     "用户名只能包含字母、数字短线（-）或者下划线（_），且必须以英文字母开头，英文字母或数字结尾"
@@ -276,11 +282,13 @@ const prompts = [
         type: "input",
         name: "dockerPassword",
         default: "",
+        when: props => props.configNow,
         message: _ => "请输入您的镜像仓库密码：",
         validate: (input, _) => {
-            if (!input) {
-                return chalk.red("请输入镜像仓库密码");
-            }
+            if (!input) return true;
+            // If (!input) {
+            //     return chalk.red("请输入镜像仓库密码");
+            // }
 
             return true;
         }

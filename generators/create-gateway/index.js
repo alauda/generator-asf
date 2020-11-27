@@ -64,6 +64,7 @@ module.exports = class extends Generator {
     }
 
     getDockerConfigJson() {
+        this.props.dockerImage = "";
         const {
             dockerUrl,
             dockerPort,
@@ -71,11 +72,11 @@ module.exports = class extends Generator {
             dockerPassword,
             projectName
         } = this.props;
-        if (!dockerUrl || !dockerPort || !dockerUsername || !dockerPassword)
-            return "";
-        const auth = base64.encode(`${dockerUsername}:${dockerPassword}`);
+        if (!dockerUrl || !dockerPort) return "";
         const authsKey = `${dockerUrl}:${dockerPort}`;
         this.props.dockerImage = `${authsKey}/${projectName}:latest`;
+        if (!dockerUsername || !dockerPassword) return "";
+        const auth = base64.encode(`${dockerUsername}:${dockerPassword}`);
         return base64.encode(
             JSON.stringify({
                 auths: {
