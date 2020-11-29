@@ -109,6 +109,13 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+            <%if (configServerEnabled && configServerType == 'K8S') { -%>
+            <plugin>
+                <groupId>io.alauda</groupId>
+                <artifactId>mock-kubernetes-maven-plugin</artifactId>
+                <version>1.0-RELEASE</version>
+            </plugin>
+            <% } -%>
 		</plugins>
 	</build>
 
