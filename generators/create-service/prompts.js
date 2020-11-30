@@ -346,7 +346,7 @@ const prompts = [
         message: _ => "请输入您的镜像仓库地址：",
         validate: (input, _) => {
             if (!input) return true;
-            if (!/^[a-z0-9]+[a-z0-9.]*[a-z0-9]+$/.test(input)) {
+            if (!/^[a-z0-9]+[a-z0-9-.]*[a-z0-9]+$/.test(input)) {
                 return chalk.red(
                     "镜像仓库地址只能包含字母、数字或者.，且必须以英文字母或数字结尾"
                 );

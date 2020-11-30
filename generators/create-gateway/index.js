@@ -81,7 +81,7 @@ module.exports = class extends Generator {
             JSON.stringify({
                 auths: {
                     [authsKey]: {
-                        userName: dockerUsername,
+                        username: dockerUsername,
                         password: dockerPassword,
                         email: "",
                         auth
