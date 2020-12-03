@@ -13,6 +13,7 @@ jobs:
     name: Publish package
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
       - name: Update package version
         run: |
           git config --local user.email "51575374@qq.com"
@@ -35,14 +36,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push image
-        id: docker_build
-        uses: docker/build-push-action@v2
+        run: |
+          docker build --build-arg generator_asf_version=$VERSION -t dwgao/generator-asf:$VERSION .
+          docker push dwgao/generator-asf:$VERSION
         env:
           VERSION: ${{ github.event.inputs.version }}
-        with:
-          push: true
-          tags: dwgao/generator-asf:$VERSION
-          build-args: generator_asf_version=$VERSION
       - name: Push tags
         uses: ad-m/github-push-action@master
         with:
