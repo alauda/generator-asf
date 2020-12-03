@@ -1,8 +1,9 @@
 FROM node:alpine
+ARG generator_asf_version
 RUN apk add --update bash tree \
 	&& rm -rf /var/cache/apk/*
 
-RUN npm install -g yo generator-asf
+RUN npm install -g yo generator-asf@$generator_asf_version
 RUN npm --force cache clear
 RUN mkdir /yo && mkdir /conf
 RUN chown -R root:root /yo \
@@ -12,4 +13,4 @@ USER root
 
 WORKDIR /yo
 
-CMD ["asf", "create-service", "--config", "/conf/asf.json"]
+CMD ["asf","cs", "--config", "/conf/asf.json"]
