@@ -9,7 +9,7 @@ const prompts = [
         message: "请输入您的工程名称：",
         validate: input => {
             if (!input) return chalk.red("工程名称不能为空");
-            if (!/^[a-z]+[a-z0-9-_]*[a-z0-9]+$/.test(input)) {
+            if (!/^[a-zA-Z]+[a-zA-Z0-9-_]*[a-zA-Z0-9]+$/.test(input)) {
                 return chalk.red(
                     "工程名称只能包含字母、数字短线（-）或者下划线（_），且必须以英文字母开头，英文字母或数字结尾"
                 );
@@ -237,7 +237,7 @@ const prompts = [
         message: _ => "请输入您的镜像仓库地址：",
         validate: (input, _) => {
             if (!input) return true;
-            if (!/^[a-z0-9]+[a-z0-9-.]*[a-z0-9]+$/.test(input)) {
+            if (!/^[a-zA-Z0-9]+[a-zA-Z0-9-.]*[a-zA-Z0-9]+$/.test(input)) {
                 return chalk.red(
                     "镜像仓库地址只能包含字母、数字或者.，且必须以英文字母或数字结尾"
                 );
@@ -269,7 +269,7 @@ const prompts = [
         message: _ => "请输入您的镜像仓库用户名：",
         validate: (input, _) => {
             if (!input) return true;
-            if (!/^[a-z]+[a-z0-9-_]*[a-z0-9]+$/.test(input)) {
+            if (!/^[a-zA-Z]+[a-zA-Z0-9-_]*[a-zA-Z0-9]+$/.test(input)) {
                 return chalk.red(
                     "用户名只能包含字母、数字短线（-）或者下划线（_），且必须以英文字母开头，英文字母或数字结尾"
                 );
