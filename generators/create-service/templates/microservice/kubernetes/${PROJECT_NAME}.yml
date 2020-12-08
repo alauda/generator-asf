@@ -144,7 +144,7 @@ spec:
       <%_ } -%>
       imagePullSecrets:
         - name: asf-registry
-      <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
+      <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ' && CONFIG_SERVER_TYPE == 'K8S') { -%>
       volumes:
         - name: asf-secret
           secret:
@@ -154,7 +154,7 @@ spec:
         - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
           imagePullPolicy: Always
           name: demo-service
-          <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
+          <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ' && CONFIG_SERVER_TYPE == 'K8S') { -%>
           volumeMounts:
             - name: asf-secret
               mountPath: /etc/secrets/asf-secrets

@@ -41,8 +41,8 @@ jobs:
           docker push dwgao/generator-asf:$VERSION
         env:
           VERSION: ${{ github.event.inputs.version }}
-      - name: Push tags
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PUSH_TOKEN }}
-          tags: true
+      #- name: Push tags
+      #  uses: ad-m/github-push-action@master
+      #  with:
+      #    github_token: ${{ secrets.PUSH_TOKEN }}
+      #    tags: true
