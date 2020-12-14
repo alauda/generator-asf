@@ -4,16 +4,15 @@ package <%= packageName %>.service;
 import <%= packageName %>.stream.<%= upperProjectName %>StreamSource;
 <%_ } -%>
 <%_ if (tracingEnabled) { -%>
-import io.opentracing.Span;
-import io.opentracing.SpanContext;
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spring.integration.messaging.MessageTextMap;
-import io.opentracing.propagation.Format;
+import brave.ScopedSpan;
+import brave.Span;
+import brave.Tracer;
+import brave.propagation.B3SingleFormat;
+import brave.propagation.TraceContext;
 <%_ } -%>
 import org.springframework.beans.factory.annotation.Value;
 <%_ if (messageQueueEnabled) { -%>
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 <%_ } -%>
 import org.springframework.stereotype.Service;
@@ -83,27 +82,22 @@ public class <%= upperProjectName %>Service {
      */
     public String pingAsync(){
         //构造异步消息
-        Message<String> message = MessageBuilder.withPayload(ping()).build();
+        Message<String> messageBuilder = MessageBuilder.withPayload(ping());
         <%_ if (tracingEnabled) { -%>
-        //将消息使用调用链通信类包装
-        MessageTextMap<String> textMap = new MessageTextMap<>(message);
 
         //获取当前请求上下文中的 Span
-        Span serverSpan = this.tracer.activeSpan();
+        Span serverSpan = tracer.currentSpan();
         if(serverSpan != null){
             //当前请求上下文中不存在 Span 则自动创建
-            SpanContext spanContext = serverSpan.context();
+            TraceContext spanContext = serverSpan.context();
             //在消息中注入调用链信息
-            tracer.inject(spanContext,Format.Builtin.TEXT_MAP, textMap);
+            ScopedSpan scopedSpan = tracer.startScopedSpanWithParent("send",spanContext);
+            messageBuilder.setHeader("b3", B3SingleFormat.writeB3SingleFormat(scopedSpan.context()));
         }
 
         //发送注入了调用链信息的消息，调用链信息将附在消息头中发送
         <%= lowerProjectName %>StreamSource.pingOutput()
-                .send(textMap.getMessage());
-        <%_ }else{ -%>
-        //发送异步消息
-        <%= lowerProjectName %>StreamSource.pingOutput()
-                .send(message);
+                .send(messageBuilder.build());
         <%_ } -%>
         //响应请求
         return "OK！Asynchronous message sent";

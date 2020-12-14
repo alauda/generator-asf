@@ -163,6 +163,7 @@ module.exports = class extends Generator {
         this.log(chalk.green("您已成功完成工程创建。工程结构如下："));
         let treeString = tree(this.props.projectName);
         this.log(chalk.yellow(treeString));
+        this.log("\n");
         this.log(
             chalk.green(
                 "脚手架已为您完成所有依赖的添加，您可能还需要根据实际开发环境完成配置文件修改。"

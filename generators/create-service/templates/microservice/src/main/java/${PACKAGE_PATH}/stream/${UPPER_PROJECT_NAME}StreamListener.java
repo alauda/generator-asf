@@ -1,8 +1,12 @@
 package <%= packageName %>.stream;
 
 <%_ if (tracingEnabled) { -%>
-import io.opentracing.Tracer;
-import io.opentracing.contrib.spring.integration.messaging.OpenTracingChannelInterceptor;
+//import io.opentracing.Tracer;
+//import io.opentracing.contrib.spring.integration.messaging.OpenTracingChannelInterceptor;
+import brave.ScopedSpan;
+import brave.Tracer;
+import brave.propagation.B3SingleFormat;
+import brave.propagation.TraceContext;
 <%_ } -%>
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -68,12 +72,23 @@ public class <%= upperProjectName %>StreamListener {
                 .withPayload(msg)
                 .copyHeaders(headers).build();
 
+        TraceContext traceContext = null;
+
         //将当前调用链上下文中的 Span 结束（结束后才能开始新的Span）
         if(tracer.activeSpan()!=null){
             tracer.activeSpan().finish();
         }
         //手动调用消息通道拦截器的 preSend 方法，会自动创建新的 Span 并记录在当前调用链上下文中
-        new OpenTracingChannelInterceptor(tracer).preSend(message,<%= lowerProjectName %>StreamSource.pingOutput());
+        //new OpenTracingChannelInterceptor(tracer).preSend(message,<%= lowerProjectName %>StreamSource.pingOutput());
+
+        if(headers.get("b3")!=null){
+            String b3 = String.valueOf(headers.get("b3"));
+            traceContext = B3SingleFormat.parseB3SingleFormat(b3).context();
+        }
+
+        ScopedSpan span = tracer.startScopedSpanWithParent("receive",traceContext);
+        span.finish();
+
         <%_ } -%>
         //在日志中输出消息内容
         log.info(msg);
