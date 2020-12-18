@@ -141,7 +141,7 @@
             <plugin>
                 <groupId>io.alauda</groupId>
                 <artifactId>mock-kubernetes-maven-plugin</artifactId>
-                <version>1.0-RELEASE</version>
+                <version>1.0.1-RELEASE</version>
             </plugin>
             <% } -%>
 		</plugins>
