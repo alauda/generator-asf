@@ -11,7 +11,8 @@ args.push("--no-insight");
 const argv = require("minimist")(args);
 const actions = {
     cs: "create-service",
-    cg: "create-gateway"
+    cg: "create-gateway",
+    version: "-v"
 };
 
 env.run([`asf:${actions[action] || action}`, ...args], {
