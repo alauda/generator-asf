@@ -82,7 +82,7 @@ public class <%= upperProjectName %>Service {
      */
     public String pingAsync(){
         //构造异步消息
-        Message<String> messageBuilder = MessageBuilder.withPayload(ping());
+        MessageBuilder<String> messageBuilder = MessageBuilder.withPayload(ping());
         <%_ if (tracingEnabled) { -%>
 
         //获取当前请求上下文中的 Span
