@@ -72,13 +72,9 @@ data:
     spring.cloud.gateway.discovery.locator.enabled: true
     <%_ if (tracingEnabled) { -%>
     #调用链配置
-    opentracing:
-      jaeger:
-        udp-sender:
-          #Jaeger主机名
-          host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
-          #Jaeger端口号
-          port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
+    spring:
+      zipkin:
+        base-url: http://<%= JAEGER_HOST  || "#请输入 Zipkin 主机名" %>:<%= JAEGER_PORT || "#请输入 Zipkin 端口号" %>/
     <%_ } -%>
 ---
 apiVersion: apps/v1
