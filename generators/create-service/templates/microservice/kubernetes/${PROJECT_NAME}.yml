@@ -80,7 +80,7 @@ metadata:
   namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
 data:
   application.yml: |-
-    <%_ if (messageQueueEnabled) { -%>
+    <%_ if (messageQueueEnabled || tracingEnabled) { -%>
     spring:
     <%_ } -%>
       <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ') { -%>
@@ -114,16 +114,10 @@ data:
               #消息数据内容类型
               content-type: application/json
       <%_ } -%>
-    <%_ if (tracingEnabled) { -%>
-    #调用链配置
-    opentracing:
-      jaeger:
-        udp-sender:
-          #Jaeger主机名
-          host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
-          #Jaeger端口号
-          port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
-    <%_ } -%>
+      <%_ if (tracingEnabled) { -%>
+      zipkin:
+        base-url: http://<%= JAEGER_HOST  || "#请输入 Jaeger 主机名" %>:<%= JAEGER_PORT || "#请输入 Jaeger 端口号" %>/
+      <%_ } -%>
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -164,10 +158,10 @@ spec:
           <%_ } -%>
           resources:
             limits:
-              cpu: '1'
+              cpu: '100m'
               memory: 512Mi
             requests:
-              cpu: '1'
+              cpu: '100m'
               memory: 512Mi
 ---
 apiVersion: v1

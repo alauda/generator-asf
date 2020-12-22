@@ -29,9 +29,13 @@ const prompts = [
         message: "请输入 Maven Group Id：",
         validate: input => {
             if (!input) return chalk.red("Maven Group Id 不能为空");
-            if (!/^[a-z]+[a-z0-9.]*[a-z0-9]+$/.test(input)) {
+            if (
+                !/^(?:[a-z_]+(?:\d*[a-zA-Z_]*)*)(?:\.[a-z_]+(?:\d*[a-zA-Z_]*)*)*$/.test(
+                    input
+                )
+            ) {
                 return chalk.red(
-                    "Maven Group Id 只能包含小写英文、数字或点（.），且必须以英文字母开头，英文字母或数字结尾"
+                    "Maven Group Id 只能包含小写英文、数字或点（.），每个 Id 名必须以英文字母开头，英文字母或数字结尾"
                 );
             }
 
@@ -59,9 +63,13 @@ const prompts = [
         message: "请输入包名：",
         validate: input => {
             if (!input) return chalk.red("包名不能为空");
-            if (!/^[a-z]+[a-z0-9.]*[a-z0-9]+$/.test(input)) {
+            if (
+                !/^(?:[a-z_]+(?:\d*[a-zA-Z_]*)*)(?:\.[a-z_]+(?:\d*[a-zA-Z_]*)*)*$/.test(
+                    input
+                )
+            ) {
                 return chalk.red(
-                    "包名只能包含小写英文、数字或点（.），且必须以英文字母开头，英文字母或数字结尾"
+                    "包名只能包含小写英文、数字或点（.），每个包名必须以英文字母开头，英文字母或数字结尾"
                 );
             }
 
