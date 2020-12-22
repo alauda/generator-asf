@@ -69,7 +69,7 @@ const prompts = [
                 )
             ) {
                 return chalk.red(
-                    "包名只能包含小写英文、数字或点（.），且必须以英文字母开头，英文字母或数字结尾"
+                    "包名只能包含小写英文、数字或点（.），每个包名必须以英文字母开头，英文字母或数字结尾"
                 );
             }
 
@@ -222,13 +222,13 @@ const prompts = [
         type: "input",
         name: "jaegerHost",
         default: "",
-        message: "请输入您的 Zipkin 访问地址（域名或IP）：",
+        message: "请输入您的 Jaeger 访问地址（域名或IP）：",
         when: props => props.configNow && props.tracingEnabled,
         validate: input => {
             if (!input) return true;
             if (!/^[a-z0-9-_.]+$/.test(input)) {
                 return chalk.red(
-                    "Zipkin 地址只能包含小写英文、数字、短线（-）或者下划线（_）"
+                    "Jaeger 地址只能包含小写英文、数字、短线（-）或者下划线（_）"
                 );
             }
 
@@ -239,16 +239,16 @@ const prompts = [
         type: "input",
         name: "jaegerPort",
         default: "",
-        message: "请输入您的 Zipkin 端口号：",
+        message: "请输入您的 Jaeger 端口号：",
         when: props => props.configNow && props.tracingEnabled,
         validate: input => {
             if (!input) return true;
             if (!/^[0-9]{0,5}$/.test(input)) {
-                return chalk.red("Zipkin 端口号只能为0~65536的数字");
+                return chalk.red("Jaeger 端口号只能为0~65536的数字");
             }
 
             if (Number(input) <= 0 || Number(input) > 65536) {
-                return chalk.red("Zipkin 端口号只能为0~65536的数字");
+                return chalk.red("Jaeger 端口号只能为0~65536的数字");
             }
 
             return true;

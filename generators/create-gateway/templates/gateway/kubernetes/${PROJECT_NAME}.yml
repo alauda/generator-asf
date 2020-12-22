@@ -69,12 +69,16 @@ metadata:
 data:
   application.yml: |-
     #通过服务发现自动添加路由
-    spring.cloud.gateway.discovery.locator.enabled: true
-    <%_ if (tracingEnabled) { -%>
-    #调用链配置
     spring:
+      cloud:
+        gateway:
+          discovery:
+            locator:
+              enabled: true
+    <%_ if (tracingEnabled) { -%>
+      #调用链配置
       zipkin:
-        base-url: http://<%= JAEGER_HOST  || "#请输入 Zipkin 主机名" %>:<%= JAEGER_PORT || "#请输入 Zipkin 端口号" %>/
+        base-url: http://<%= JAEGER_HOST  || "#请输入 Jaeger 主机名" %>:<%= JAEGER_PORT || "#请输入 Jaeger 端口号" %>/
     <%_ } -%>
 ---
 apiVersion: apps/v1
@@ -104,10 +108,10 @@ spec:
           name: demo-service
           resources:
             limits:
-              cpu: '1'
+              cpu: '100m'
               memory: 512Mi
             requests:
-              cpu: '1'
+              cpu: '100m'
               memory: 512Mi
 ---
 apiVersion: v1

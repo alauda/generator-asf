@@ -1,13 +1,8 @@
 #请将此文件内容添加至 Consul Key/Value 中 config/<%= PROJECT_NAME %>/data 配置路径下
 spring.cloud.gateway.discovery.locator.enabled: true
 <%_ if (tracingEnabled) { -%>
-#调用链配置
-opentracing:
-  jaeger:
-    udp-sender:
-      #Jaeger主机名
-      host: <%= JAEGER_HOST || "#请输入 Jaeger 主机名" %>
-      #Jaeger端口号
-      port: <%= JAEGER_PORT || "#请输入 Jaeger端口号" %>
+spring:
+  zipkin:
+    base-url: http://<%= JAEGER_HOST  || "#请输入 Jaeger 主机名" %>:<%= JAEGER_PORT || "#请输入 Jaeger 端口号" %>/
 <%_ } -%>
 

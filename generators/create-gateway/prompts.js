@@ -81,11 +81,12 @@ const prompts = [
         name: "k8sNamespace",
         message:
             "请输入网关要部署的命名空间名称(如不部署在 Kubernetes 可跳过)：",
-        when: props =>
-            props.configServerEnabled && props.configServerType === "K8S",
-        default: "default",
+        // When: props =>
+        //     props.configServerEnabled && props.configServerType === "K8S",
+        // default: "default",
         validate: input => {
-            if (!input) return chalk.red("命名空间名称不能为空");
+            // If (!input) return chalk.red("命名空间名称不能为空");
+            if (!input) return true;
             if (!/^[a-z]+[a-z0-9-]*[a-z0-9]+$/.test(input)) {
                 return chalk.red(
                     "命名空间名称只能包含字母、数字短线（-），且必须以英文字母开头，英文字母或数字结尾"
@@ -205,13 +206,13 @@ const prompts = [
         type: "input",
         name: "jaegerHost",
         default: "",
-        message: "请输入您的 Zipkin 访问地址（域名或IP）：",
+        message: "请输入您的 Jaeger 访问地址（域名或IP）：",
         when: props => props.configNow && props.tracingEnabled,
         validate: input => {
             if (!input) return true;
             if (!/^[a-z0-9-_.]+$/.test(input)) {
                 return chalk.red(
-                    "Zipkin 地址只能包含小写英文、数字、短线（-）或者下划线（_）"
+                    "Jaeger 地址只能包含小写英文、数字、短线（-）或者下划线（_）"
                 );
             }
 
@@ -222,16 +223,16 @@ const prompts = [
         type: "input",
         name: "jaegerPort",
         default: "",
-        message: "请输入您的 Zipkin 端口号：",
+        message: "请输入您的 Jaeger 端口号：",
         when: props => props.configNow && props.tracingEnabled,
         validate: input => {
             if (!input) return true;
             if (!/^[0-9]+$/.test(input)) {
-                return chalk.red("Zipkin 端口号只能为0~65536的数字");
+                return chalk.red("Jaeger 端口号只能为0~65536的数字");
             }
 
             if (Number(input) <= 0 || Number(input) > 65536) {
-                return chalk.red("Zipkin 端口号只能为0~65536的数字");
+                return chalk.red("Jaeger 端口号只能为0~65536的数字");
             }
 
             return true;
