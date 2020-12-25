@@ -18,7 +18,7 @@ jobs:
         run: |
           git config --local user.email "51575374@qq.com"
           git config --local user.name "madogao"
-          version="npm version $VERSION"
+          version="npm version --allow-same-version $VERSION"
           $version
         env:
           VERSION: ${{ github.event.inputs.version }}
