@@ -1,9 +1,5 @@
 FROM openjdk:8-alpine
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
 
-COPY target/*.jar /app/app.jar
-
-COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-
-RUN chmod +x /app/docker-entrypoint.sh
-
-ENTRYPOINT ["sh","/app/docker-entrypoint.sh"]

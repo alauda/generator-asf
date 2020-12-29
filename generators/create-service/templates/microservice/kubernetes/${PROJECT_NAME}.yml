@@ -82,9 +82,7 @@ data:
   application.yml: |-
     management:
         health:
-          livenessstate:
-            enabled: true
-          readinessstate:
+          probes:
             enabled: true
         endpoints:
           web:
