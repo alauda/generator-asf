@@ -2,9 +2,7 @@
 spring.cloud.gateway.discovery.locator.enabled: true
 management:
     health:
-        livenessstate:
-            enabled: true
-        readinessstate:
+        probes:
             enabled: true
     endpoints:
         web:
