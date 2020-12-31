@@ -1,7 +1,7 @@
 spring:
   application:
     #服务名称
-    name: <%= PROJECT_NAME %>
+    name: ${MICRO_SERVICE_NAME}
   cloud:
     <%_ if (CONFIG_SERVER_TYPE == 'CONSUL' || DISCOVERY_SERVER_TYPE == 'CONSUL') { -%>
     #Consul 配置
@@ -33,10 +33,10 @@ spring:
         enabled: true
       secrets:
         sources:
-          - name: <%= PROJECT_NAME %>
+          - name: ${MICRO_SERVICE_NAME}
       config:
         sources:
-          - name: <%= PROJECT_NAME %>
+          - name: ${MICRO_SERVICE_NAME}
     <%_ } -%>
 ---
 spring:
