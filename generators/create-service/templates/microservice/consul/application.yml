@@ -1,12 +1,12 @@
 #请将此文件内容添加至 Consul Key/Value 中 config/<%= PROJECT_NAME %>/data 配置路径下
 management:
-    health:
-        probes:
-            enabled: true
-    endpoints:
-        web:
-            exposure:
-                include: "*"
+  health:
+    probes:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
 spring:
   <%_ if (messageQueueType=='RABBIT_MQ') { -%>
