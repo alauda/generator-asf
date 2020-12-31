@@ -13,11 +13,18 @@ spring:
       <%_ if (DISCOVERY_SERVER_TYPE == 'CONSUL') { -%>
       #Consul 注册发现配置
       discovery:
+        prefer-ip-address: true
+        <%_ if (CONSUL_TOKEN) { -%>
         #Consul 凭据
         acl-token: <%= CONSUL_TOKEN %>
+        <%_ } -%>
       <%_ } -%>
       <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'CONSUL') { -%>
       config:
+        enabled: true # 是否启用配置中心
+        format: yaml # 配置格式
+        prefix: config # 配置所在目录
+        data-key: data # 配置k/v中k的名字
         <%_ if (CONSUL_TOKEN) { -%>
         #Consul 凭据
         acl-token: <%= CONSUL_TOKEN %>
