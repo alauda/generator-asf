@@ -1,0 +1,28 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    #服务名称
+    name: ${MICRO_SERVICE_NAME}
+  cloud:
+    kubernetes:
+      secrets:
+        paths: /etc/secrets/asf-secret
+      config:
+        sources:
+          - name: ${MICRO_SERVICE_NAME}
+      reload:
+        enabled: true
+---
+spring:
+  profiles: local
+  cloud:
+    kubernetes:
+      client:
+        masterUrl: https://127.0.0.1:8443
+        trustCerts: true
+      config:
+        namespace: default
+      secrets:
+        namespace: default
+        enable-api: true

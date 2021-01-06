@@ -12,25 +12,24 @@ data:
     #   }
     # }
     # 以上对象转为json字符串并base64后可填入下方
-  .dockerconfigjson: <%= DOCKER_CONFIG_JSON %>
+  .dockerconfigjson: eyJhdXRocyI6eyJoYXJib3ItYi5hbGF1ZGEuY246NjAwODAiOnsidXNlcm5hbWUiOiJhZG1pbiIsInBhc3N3b3JkIjoiMTIzIiwiZW1haWwiOiIiLCJhdXRoIjoiWVdSdGFXNDZNVEl6In19fQ==
 kind: Secret
 metadata:
   name: asf-registry
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  namespace: default
 type: kubernetes.io/dockerconfigjson
-<%_ if (CONFIG_SERVER_TYPE == 'K8S' || DISCOVERY_SERVER_TYPE == 'K8S') { -%>
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: asf-service
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: asf-service
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  namespace: default
 rules:
   - apiGroups:
       - ""
@@ -49,35 +48,30 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: asf-service
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  namespace: default
 subjects:
   - kind: ServiceAccount
     name: asf-service
-    namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+    namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: asf-service
-<%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: <%= PROJECT_NAME %>
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  name: demo-ym1
+  namespace: default
 data:
-  <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ') { -%>
-  spring.rabbitmq.password: <%= messageQueuePasswordBase64 || "#请输入 RabbitMQ 密码" %>
-  <%_ } -%>
-<%_ } -%>
-<%_ } -%>
+  spring.rabbitmq.password: U09NamJhS04wYQ==
 ---
-#请将此 ConfigMap 添加至 K8S 集群的 <%= K8S_NAMESPACE %> 命名空间下
+#请将此 ConfigMap 添加至 K8S 集群的 default 命名空间下
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: <%= PROJECT_NAME %>
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  name: demo-ym1
+  namespace: default
 data:
   application.yml: |-
     management:
@@ -88,28 +82,18 @@ data:
           web:
             exposure:
               include: "*"
-    <%_ if (messageQueueEnabled || tracingEnabled) { -%>
     spring:
-    <%_ } -%>
-      <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ') { -%>
       #RabbitMQ 配置
       rabbitmq:
         #RabbitMQ 主机名
-        host: <%= MESSAGE_QUEUE_HOST || "#请输入 RabbitMQ 主机名" %>
+        host: 10.110.159.195
         #RabbitMQ 访问端口
-        port: <%= MESSAGE_QUEUE_PORT || "#请输入 RabbitMQ 端口号" %>
+        port: 5672
         #RabbitMQ 虚拟主机
         virtual-host: /
         #RabbitMQ 用户名
-        username: <%= MESSAGE_QUEUE_USERNAME || "#请输入 RabbitMQ 用户名" %>
+        username: user
         #RabbitMQ 密码从 secret/demo-service-secret 中获取
-      <%_ } -%>
-      <%_ if (messageQueueEnabled && messageQueueType=='KAFKA') { -%>
-      kafka:
-      #Kafka 地址
-        bootstrap-servers: <%= MESSAGE_QUEUE_HOST && MESSAGE_QUEUE_PORT || "#请输入 Kafka 主机名:Kafka 端口号" %>
-      <%_ } -%>
-      <%_ if (messageQueueEnabled) { -%>
       #Spring Cloud Stream 配置
       cloud:
         stream:
@@ -121,49 +105,38 @@ data:
               destination: DEMO_QUEUE
               #消息数据内容类型
               content-type: application/json
-      <%_ } -%>
-      <%_ if (tracingEnabled) { -%>
-      zipkin:
-        base-url: http://<%= JAEGER_HOST  || "#请输入 Jaeger 主机名" %>:<%= JAEGER_PORT || "#请输入 Jaeger 端口号" %>/
-      <%_ } -%>
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: <%= PROJECT_NAME %>
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  name: demo-ym1
+  namespace: default
   labels:
-    service.asf.io/name: <%= PROJECT_NAME %>
+    service.asf.io/name: demo-ym1
 spec:
   selector:
     matchLabels:
-      service.asf.io/name: <%= PROJECT_NAME %>
+      service.asf.io/name: demo-ym1
   template:
     metadata:
       labels:
-        service.asf.io/name: <%= PROJECT_NAME %>
+        service.asf.io/name: demo-ym1
     spec:
-      <%_ if (CONFIG_SERVER_TYPE == 'K8S' || DISCOVERY_SERVER_TYPE == 'K8S') { -%>
       serviceAccountName: asf-service
-      <%_ } -%>
       imagePullSecrets:
         - name: asf-registry
-      <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
       volumes:
         - name: asf-secret
           secret:
-            secretName: <%= PROJECT_NAME %>
-      <%_ } -%>
+            secretName: demo-ym1
       containers:
-        - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
+        - image: harbor-b.alauda.cn/3rdparty/demo-ym1:latest
           imagePullPolicy: Always
-          name: <%= PROJECT_NAME %>
-          <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
+          name: demo-ym1
           volumeMounts:
             - name: asf-secret
               mountPath: /etc/secrets/asf-secret
               readOnly: true
-          <%_ } -%>
           resources:
             limits:
               cpu: '1'
@@ -195,8 +168,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: <%= PROJECT_NAME %>
-  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  name: demo-ym1
+  namespace: default
 spec:
   ports:
     - name: http
@@ -204,5 +177,5 @@ spec:
       protocol: TCP
       targetPort: 8080
   selector:
-    service.asf.io/name: <%= PROJECT_NAME %>
+    service.asf.io/name: demo-ym1
   type: NodePort
