@@ -38,14 +38,15 @@ spring:
     <%_ } -%>
     <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'K8S') { -%>
     kubernetes:
-      reload:
-        enabled: true
       secrets:
+        paths: /etc/secrets/asf-secret
         sources:
           - name: ${MICRO_SERVICE_NAME}
       config:
         sources:
           - name: ${MICRO_SERVICE_NAME}
+      reload:
+        enabled: true
     <%_ } -%>
 ---
 spring:
