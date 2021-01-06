@@ -1,6 +1,4 @@
 spring:
-  main:
-    allow-bean-definition-overriding: true
   application:
     #服务名称
     name: ${MICRO_SERVICE_NAME}
@@ -46,16 +44,3 @@ spring:
       reload:
         enabled: true
     <%_ } -%>
----
-spring:
-  profiles: local
-  cloud:
-    kubernetes:
-      client:
-        masterUrl: https://127.0.0.1:8443
-        trustCerts: true
-      config:
-        namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
-      secrets:
-        namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
-        enable-api: true

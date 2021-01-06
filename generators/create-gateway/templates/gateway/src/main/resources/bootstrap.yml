@@ -37,25 +37,10 @@ spring:
     <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'K8S') { -%>
     kubernetes:
       secrets:
-        sources:
-          - name: ${MICRO_SERVICE_NAME}
+        paths: /etc/secrets/asf-secret
       config:
         sources:
           - name: ${MICRO_SERVICE_NAME}
       reload:
         enabled: true
     <%_ } -%>
----
-spring:
-  profiles: local
-  cloud:
-    kubernetes:
-      client:
-        masterUrl: https://127.0.0.1:8443
-        trustCerts: true
-      config:
-        namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
-      secrets:
-        namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
-        enable-api: true
-
