@@ -113,14 +113,14 @@ spec:
       containers:
         - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
           imagePullPolicy: Always
-          name: demo-service
+          name: <%= PROJECT_NAME %>
           resources:
             limits:
-              cpu: '500m'
-              memory: 512Mi
+              cpu: '1'
+              memory: 1000Mi
             requests:
-              cpu: '500m'
-              memory: 512Mi
+              cpu: '1'
+              memory: 1000Mi
           readinessProbe:
               failureThreshold: 2
               httpGet:
