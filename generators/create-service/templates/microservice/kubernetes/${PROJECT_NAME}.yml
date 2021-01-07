@@ -151,6 +151,7 @@ spec:
       volumes:
         - name: asf-secret
           secret:
+            defaultMode: 420
             secretName: <%= PROJECT_NAME %>
       <%_ } -%>
       containers:
@@ -160,7 +161,7 @@ spec:
           <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
           volumeMounts:
             - name: asf-secret
-              mountPath: /etc/secrets/asf-secret
+              mountPath: /etc/secrets/asf-secrets
               readOnly: true
           <%_ } -%>
           resources:

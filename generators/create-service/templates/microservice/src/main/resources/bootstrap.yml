@@ -37,7 +37,7 @@ spring:
     <%_ if (CONFIG_SERVER_ENABLED && CONFIG_SERVER_TYPE == 'K8S') { -%>
     kubernetes:
       secrets:
-        paths: /etc/secrets/asf-secret
+        paths: /etc/secrets/asf-secrets
       config:
         sources:
           - name: ${MICRO_SERVICE_NAME}
