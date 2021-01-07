@@ -39,7 +39,6 @@ rules:
       - pods
       - services
       - endpoints
-      - secrets
     verbs:
       - get
       - list
@@ -58,7 +57,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: asf-service
-<%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ' && CONFIG_SERVER_TYPE == 'K8S') { -%>
+<%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
 ---
 apiVersion: v1
 kind: Secret
@@ -148,17 +147,18 @@ spec:
       <%_ } -%>
       imagePullSecrets:
         - name: asf-registry
-      <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ' && CONFIG_SERVER_TYPE == 'K8S') { -%>
+      <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
       volumes:
         - name: asf-secret
           secret:
+            defaultMode: 420
             secretName: <%= PROJECT_NAME %>
       <%_ } -%>
       containers:
         - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
           imagePullPolicy: Always
-          name: demo-service
-          <%_ if (messageQueueEnabled && messageQueueType=='RABBIT_MQ' && CONFIG_SERVER_TYPE == 'K8S') { -%>
+          name: <%= PROJECT_NAME %>
+          <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
           volumeMounts:
             - name: asf-secret
               mountPath: /etc/secrets/asf-secrets
@@ -166,11 +166,11 @@ spec:
           <%_ } -%>
           resources:
             limits:
-              cpu: '500m'
-              memory: 512Mi
+              cpu: '1'
+              memory: 1000Mi
             requests:
-              cpu: '500m'
-              memory: 512Mi
+              cpu: '1'
+              memory: 1000Mi
           readinessProbe:
               failureThreshold: 2
               httpGet:

@@ -39,7 +39,6 @@ rules:
       - pods
       - services
       - endpoints
-      - secrets
     verbs:
       - get
       - list
@@ -58,6 +57,13 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: asf-service
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: <%= PROJECT_NAME %>
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+data:
 <%_ } -%>
 ---
 #请将此 ConfigMap 添加至 K8S 集群的 <%= K8S_NAMESPACE %> 命名空间下
@@ -110,17 +116,30 @@ spec:
       <%_ } -%>
       imagePullSecrets:
         - name: asf-registry
+      <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
+      volumes:
+        - name: asf-secret
+          secret:
+            defaultMode: 420
+            secretName: <%= PROJECT_NAME %>
+      <%_ } -%>
       containers:
         - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
           imagePullPolicy: Always
-          name: demo-service
+          name: <%= PROJECT_NAME %>
+          <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
+          volumeMounts:
+            - name: asf-secret
+              mountPath: /etc/secrets/asf-secrets
+              readOnly: true
+          <%_ } -%>
           resources:
             limits:
-              cpu: '500m'
-              memory: 512Mi
+              cpu: '1'
+              memory: 1000Mi
             requests:
-              cpu: '500m'
-              memory: 512Mi
+              cpu: '1'
+              memory: 1000Mi
           readinessProbe:
               failureThreshold: 2
               httpGet:
