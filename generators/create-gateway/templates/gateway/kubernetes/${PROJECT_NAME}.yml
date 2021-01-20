@@ -74,21 +74,6 @@ metadata:
   namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
 data:
   application.yml: |-
-    management:
-      health:
-        probes:
-          enabled: true
-      endpoints:
-        web:
-          exposure:
-            include: "*"
-    #通过服务发现自动添加路由
-    spring:
-      cloud:
-        gateway:
-          discovery:
-            locator:
-              enabled: true
     <%_ if (tracingEnabled) { -%>
       #调用链配置
       zipkin:

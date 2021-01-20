@@ -3,6 +3,11 @@ spring:
     #服务名称
     name: ${MICRO_SERVICE_NAME}
   cloud:
+    #通过服务发现自动添加路由
+    gateway:
+      discovery:
+        locator:
+          enabled: true
     <%_ if (CONFIG_SERVER_TYPE == 'CONSUL' || DISCOVERY_SERVER_TYPE == 'CONSUL') { -%>
     #Consul 配置
     consul:

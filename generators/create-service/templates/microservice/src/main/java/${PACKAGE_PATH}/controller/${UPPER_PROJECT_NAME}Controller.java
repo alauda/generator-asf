@@ -16,8 +16,7 @@ public class <%= upperProjectName %>Controller {
     /**
      * Demo 服务
      */
-    final
-    <%= upperProjectName %>Service <%= lowerProjectName %>Service;
+    final <%= upperProjectName %>Service <%= lowerProjectName %>Service;
 
     /**
      * 构造函数

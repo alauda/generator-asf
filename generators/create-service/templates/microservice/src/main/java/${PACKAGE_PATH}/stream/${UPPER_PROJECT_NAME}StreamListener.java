@@ -32,15 +32,13 @@ public class <%= upperProjectName %>StreamListener {
     /**
      * 获取自动注入的 Tracer，用于记录调用链跟踪
      */
-    final
-    Tracer tracer;
+    final Tracer tracer;
     <%_ } -%>
 
     /**
      * 获取自动注入的 Spring Cloud Stream 消息通道
      */
-    final
-    <%= upperProjectName %>StreamSource <%= lowerProjectName %>StreamSource;
+    final <%= upperProjectName %>StreamSource <%= lowerProjectName %>StreamSource;
 
     /**
      * 构造函数

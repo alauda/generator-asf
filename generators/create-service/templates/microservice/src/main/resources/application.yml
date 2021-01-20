@@ -1,2 +1,10 @@
+#actuator配置
 management:
-    port: 8080
+  port: 8080
+  health:
+    probes:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

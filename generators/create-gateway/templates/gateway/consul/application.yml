@@ -1,14 +1,4 @@
 #请将此文件内容添加至 Consul Key/Value 中 config/<%= PROJECT_NAME %>/data 配置路径下
-spring.cloud.gateway.discovery.locator.enabled: true
-management:
-  health:
-    probes:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
 <%_ if (tracingEnabled) { -%>
 spring:
   zipkin:

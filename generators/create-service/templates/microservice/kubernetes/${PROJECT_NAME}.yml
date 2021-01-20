@@ -79,14 +79,6 @@ metadata:
   namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
 data:
   application.yml: |-
-    management:
-        health:
-          probes:
-            enabled: true
-        endpoints:
-          web:
-            exposure:
-              include: "*"
     <%_ if (messageQueueEnabled || tracingEnabled) { -%>
     spring:
     <%_ } -%>
