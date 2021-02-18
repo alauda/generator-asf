@@ -179,23 +179,15 @@ module.exports = class extends Generator {
                 configPath = chalk.hex("#34AFE4")(
                     `【${this.props.projectName}/src/main/resources/config/configmap.yml】`
                 );
-                let namespace = chalk.hex("#34AFE4")(
-                    `【${this.props.k8sNamespace}】`
-                );
-                let configmap = chalk.hex("#34AFE4")(
-                    `【${this.props.projectName}】`
-                );
                 this.log(
-                    `${chalk.yellow("请将配置文件")}${configPath}${chalk.yellow(
-                        "提交至 Kubernetes 集群的 "
-                    )}${namespace}${chalk.yellow(
-                        "命名空间下"
-                    )}${configmap}${chalk.yellow("ConfigMap 中")}`
+                    `${chalk.yellow("配置文件位于")}${configPath}${chalk.yellow(
+                        "您可以通过 kubectl 一键完成服务部署和配置提交。"
+                    )}`
                 );
             } else {
                 this.log(
-                    `${chalk.yellow("请将配置文件")}${configPath}${chalk.yellow(
-                        "提交至 Consul 的 "
+                    `${chalk.yellow("配置文件位于")}${configPath}${chalk.yellow(
+                        "您需要提交至 Consul 的 "
                     )}${kv}${chalk.yellow("Key/Value 配置中")}`
                 );
             }

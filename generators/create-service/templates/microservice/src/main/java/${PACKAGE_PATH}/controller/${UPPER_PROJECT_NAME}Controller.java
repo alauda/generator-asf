@@ -5,6 +5,24 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+<%_ if (tracingEnabled) { -%>
+import <%= packageName %>.metrics.<%= upperProjectName %>MetricTags;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import java.util.Arrays;
+import java.util.List;
+import org.springframework.cloud.sleuth.SpanName;
+<%_ } -%>
 
 /**
  * Controller 层示例代码
@@ -13,11 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class <%= upperProjectName %>Controller {
 
+    <%_ if (tracingEnabled) { -%>
+
+    private static Logger log = LoggerFactory.getLogger(<%= upperProjectName %>Controller.class);
+
+    <%_ } -%>
+
     /**
      * Demo 服务
      */
-    final
-    <%= upperProjectName %>Service <%= lowerProjectName %>Service;
+    final <%= upperProjectName %>Service <%= lowerProjectName %>Service;
 
     /**
      * 构造函数

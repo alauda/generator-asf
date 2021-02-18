@@ -8,6 +8,14 @@ const ignoreFiles = (rootPath, props, next) => {
     }
 
     if (
+        !props.tracingEnabled &&
+        rootPath.includes(`src/main/java/${props.packagePath}/metrics`)
+    ) {
+        next();
+        return true;
+    }
+
+    if (
         props.discoveryServerType !== "CONSUL" &&
         props.configServerType !== "CONSUL" &&
         rootPath.includes(`consul`)

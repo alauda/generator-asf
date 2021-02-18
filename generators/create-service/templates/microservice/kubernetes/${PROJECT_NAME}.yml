@@ -79,14 +79,17 @@ metadata:
   namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
 data:
   application.yml: |-
+    #Actuator 配置
     management:
+      port: 8080
+      endpoint:
         health:
           probes:
             enabled: true
-        endpoints:
-          web:
-            exposure:
-              include: "*"
+      endpoints:
+        web:
+          exposure:
+            include: "*"
     <%_ if (messageQueueEnabled || tracingEnabled) { -%>
     spring:
     <%_ } -%>
@@ -124,6 +127,8 @@ data:
       <%_ if (tracingEnabled) { -%>
       zipkin:
         base-url: http://<%= JAEGER_HOST  || "#请输入 Jaeger 主机名" %>:<%= JAEGER_PORT || "#请输入 Jaeger 端口号" %>/
+        service:
+          name: <%= PROJECT_NAME %>.<%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
       <%_ } -%>
 ---
 apiVersion: apps/v1
@@ -137,10 +142,12 @@ spec:
   selector:
     matchLabels:
       service.asf.io/name: <%= PROJECT_NAME %>
+      asm.cpaas.io/spcl: <%= PROJECT_NAME %>
   template:
     metadata:
       labels:
         service.asf.io/name: <%= PROJECT_NAME %>
+        asm.cpaas.io/spcl: <%= PROJECT_NAME %>
     spec:
       <%_ if (CONFIG_SERVER_TYPE == 'K8S' || DISCOVERY_SERVER_TYPE == 'K8S') { -%>
       serviceAccountName: asf-service
@@ -157,6 +164,11 @@ spec:
       containers:
         - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
           imagePullPolicy: Always
+          env:
+          - name: SPRING_APPLICATION_NAME
+            value: <%= PROJECT_NAME %>
+          - name: KUBERNETES_NAMESPACE
+            value: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
           name: <%= PROJECT_NAME %>
           <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
           volumeMounts:
@@ -164,6 +176,9 @@ spec:
               mountPath: /etc/secrets/asf-secrets
               readOnly: true
           <%_ } -%>
+          ports:
+            - containerPort: 8080
+              protocol: TCP
           resources:
             limits:
               cpu: '1'
@@ -197,12 +212,41 @@ kind: Service
 metadata:
   name: <%= PROJECT_NAME %>
   namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  labels:
+    service.asf.io/name: <%= PROJECT_NAME %>
+    asm.cpaas.io/spcl: <%= PROJECT_NAME %>
+    <%= PROJECT_NAME %>-monitor: <%= PROJECT_NAME %>
 spec:
   ports:
-    - name: http
+    - name: service-port
       port: 8080
       protocol: TCP
       targetPort: 8080
   selector:
     service.asf.io/name: <%= PROJECT_NAME %>
   type: NodePort
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: <%= PROJECT_NAME %>
+    release: kube-prometheus
+    heritage: Helm
+    prometheus: kube-prometheus
+    service.asf.io/name: <%= PROJECT_NAME %>
+  name: <%= PROJECT_NAME %>-monitor
+  namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+spec:
+  jobLabel: <%= PROJECT_NAME %>-monitor
+  namespaceSelector:
+    matchNames:
+      - <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+  selector:
+    matchLabels:
+      service.asf.io/name: <%= PROJECT_NAME %>
+      asm.cpaas.io/spcl: <%= PROJECT_NAME %>
+  endpoints:
+    - port: service-port
+      interval: 5s
+      path: /actuator/prometheus
