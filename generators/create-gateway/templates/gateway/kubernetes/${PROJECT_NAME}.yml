@@ -74,10 +74,13 @@ metadata:
   namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
 data:
   application.yml: |-
+    #Actuator 配置
     management:
-      health:
-        probes:
-          enabled: true
+      port: 8080
+      endpoint:
+        health:
+          probes:
+            enabled: true
       endpoints:
         web:
           exposure:

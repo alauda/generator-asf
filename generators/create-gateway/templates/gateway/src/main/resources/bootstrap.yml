@@ -1,3 +1,11 @@
+logging:
+  level:
+    reactor:
+      netty: INFO
+  org:
+    springframework:
+      cloud:
+        gateway: TRACE
 spring:
   application:
     #服务名称
