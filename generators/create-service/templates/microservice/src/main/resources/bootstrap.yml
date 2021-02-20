@@ -5,8 +5,8 @@ management:
       reporter: source
       service: ${spring.application.name}
       namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
-      client_name: unknown
-      client_namespace: unknown
+      client_name: ${SPRING_APPLICATION_NAME:default_unknown}
+      client_namespace: ${KUBERNETES_NAMESPACE:default_unknown}
     distribution:
       percentiles-histogram:
         http:
@@ -77,11 +77,11 @@ spring:
       <%_ if (tracingEnabled) { -%>
       workload:
         name: ${SOURCE_WORKLOAD:default_unknown}
-        namespace: ${SOURCE_SERVICE_NAMESPACE:default_unknown}
+        namespace: ${KUBERNETES_NAMESPACE:default_unknown}
         app: ${SOURCE_APP:default_unknown}
       service:
         name: ${spring.application.name:default_unknown}
-        namespace: ${SOURCE_SERVICE_NAMESPACE:default_unknown}
+        namespace: ${KUBERNETES_NAMESPACE:default_unknown}
       discovery:
         all-namespace: true
       <%_ } -%>
