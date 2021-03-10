@@ -1,3 +1,35 @@
+server:
+  port: 8080
+  names: ${MICRO_SERVICE_NAME}
+management:
+  server:
+    port: 8080
+  endpoint:
+    info:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      service: ${MICRO_SERVICE_NAME}
+      namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    web:
+      server:
+        request:
+          autotime:
+            percentiles: 0.5,0.95,0.99
+    enable:
+      jvm: false
 logging:
   level:
     reactor:
@@ -11,6 +43,15 @@ spring:
     #服务名称
     name: ${MICRO_SERVICE_NAME}
   cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      metrics:
+        prefix: http_client
+    loadbalancer:
+      ribbon:
+        enabled: false
     <%_ if (CONFIG_SERVER_TYPE == 'CONSUL' || DISCOVERY_SERVER_TYPE == 'CONSUL') { -%>
     #Consul 配置
     consul:
@@ -51,4 +92,9 @@ spring:
           - name: ${MICRO_SERVICE_NAME}
       reload:
         enabled: true
+      service:
+        name: ${MICRO_SERVICE_NAME:default_unknown}
+        namespace: ${KUBERNETES_NAMESPACE:default_unknown}
+      discovery:
+        all-namespace: true
     <%_ } -%>

@@ -1,12 +1,26 @@
+server:
+  port: 8080
+  names: ${MICRO_SERVICE_NAME}
 management:
-  <%_ if (tracingEnabled) { -%>
+  server:
+    port: 8080
+  endpoint:
+    info:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
   metrics:
     tags:
-      reporter: source
-      service: ${spring.application.name}
-      namespace: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
-      client_name: unknown
-      client_namespace: unknown
+      service: ${MICRO_SERVICE_NAME}
+      namespace: ${KUBERNETES_NAMESPACE:default_unknown}
+      client_name: ${MICRO_SERVICE_NAME:default_unknown}
+      client_namespace: ${KUBERNETES_NAMESPACE:default_unknown}
+      request_operation: default_unknown
     distribution:
       percentiles-histogram:
         http:
@@ -19,13 +33,6 @@ management:
             percentiles: 0.5,0.95,0.99
     enable:
       jvm: false
-  <%_ } -%>
-
-server:
-  port: 8080
-  names: ${MICRO_SERVICE_NAME}
-
-
 spring:
   application:
     #服务名称
@@ -77,13 +84,12 @@ spring:
       <%_ if (tracingEnabled) { -%>
       workload:
         name: ${SOURCE_WORKLOAD:default_unknown}
-        namespace: ${SOURCE_SERVICE_NAMESPACE:default_unknown}
+        namespace: ${KUBERNETES_NAMESPACE:default_unknown}
         app: ${SOURCE_APP:default_unknown}
       service:
-        name: ${spring.application.name:default_unknown}
-        namespace: ${SOURCE_SERVICE_NAMESPACE:default_unknown}
+        name: ${MICRO_SERVICE_NAME:default_unknown}
+        namespace: ${KUBERNETES_NAMESPACE:default_unknown}
       discovery:
         all-namespace: true
       <%_ } -%>
     <%_ } -%>
-

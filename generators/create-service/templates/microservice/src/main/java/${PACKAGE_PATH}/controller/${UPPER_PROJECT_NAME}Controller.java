@@ -32,9 +32,7 @@ import org.springframework.cloud.sleuth.SpanName;
 public class <%= upperProjectName %>Controller {
 
     <%_ if (tracingEnabled) { -%>
-
     private static Logger log = LoggerFactory.getLogger(<%= upperProjectName %>Controller.class);
-
     <%_ } -%>
 
     /**

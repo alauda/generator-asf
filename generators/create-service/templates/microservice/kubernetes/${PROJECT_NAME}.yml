@@ -80,8 +80,11 @@ metadata:
 data:
   application.yml: |-
     #Actuator 配置
-    management:
+    server:
       port: 8080
+    management:
+      server:
+        port: 8080
       endpoint:
         health:
           probes:
@@ -166,6 +169,8 @@ spec:
           imagePullPolicy: Always
           env:
           - name: SPRING_APPLICATION_NAME
+            value: <%= PROJECT_NAME %>
+          - name: MICRO_SERVICE_NAME
             value: <%= PROJECT_NAME %>
           - name: KUBERNETES_NAMESPACE
             value: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
