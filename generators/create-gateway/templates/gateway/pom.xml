@@ -23,13 +23,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
-            <version>2.2.6.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-            <version>2.2.6.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -37,14 +35,6 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
             <version>1.6.1</version>
         </dependency>
-
-<%if (circuitBreakerEnabled || rateLimitEnabled) { -%>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-            <version>1.0.4.RELEASE</version>
-		</dependency>
-<% } -%>
 <%if (configServerEnabled && configServerType == 'CONSUL') { -%>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -55,7 +45,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-kubernetes-all</artifactId>
-            <version>1.1.7.RELEASE</version>
         </dependency>
 <% } -%>
 <%if (discoveryServerType == 'CONSUL') { -%>
@@ -67,39 +56,34 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>2.2.6.RELEASE</version>
         </dependency>
 
 <%if (tracingEnabled) { -%>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zipkin</artifactId>
-            <version>2.2.6.RELEASE</version>
         </dependency>
 <% } -%>
 
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
+            <version>3.0.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-            <version>2.3.5.RELEASE</version>
         </dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-            <version>1.18.18</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-            <version>2.3.5.RELEASE</version>
             <scope>test</scope>
 			<exclusions>
 				<exclusion>
