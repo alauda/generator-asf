@@ -75,8 +75,11 @@ metadata:
 data:
   application.yml: |-
     #Actuator 配置
-    management:
+    server:
       port: 8080
+    management:
+      server:
+        port: 8080
       endpoint:
         health:
           probes:
@@ -96,6 +99,8 @@ data:
       #调用链配置
       zipkin:
         base-url: http://<%= JAEGER_HOST  || "#请输入 Jaeger 主机名" %>:<%= JAEGER_PORT || "#请输入 Jaeger 端口号" %>/
+        service:
+          name: <%= PROJECT_NAME %>.<%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
     <%_ } -%>
 ---
 apiVersion: apps/v1
@@ -129,6 +134,11 @@ spec:
       containers:
         - image: <%= DOCKER_IMAGE || "#请输入镜像" %>
           imagePullPolicy: Always
+          env:
+          - name: MICRO_SERVICE_NAME
+            value: <%= PROJECT_NAME %>
+          - name: KUBERNETES_NAMESPACE
+            value: <%= K8S_NAMESPACE || "#请输入 命名空间名称" %>
           name: <%= PROJECT_NAME %>
           <%_ if (CONFIG_SERVER_TYPE == 'K8S') { -%>
           volumeMounts:

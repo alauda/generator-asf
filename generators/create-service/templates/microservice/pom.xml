@@ -28,12 +28,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
-<%if (circuitBreakerEnabled || rateLimitEnabled) { -%>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
-		</dependency>
-<% } -%>
 <%if (configServerEnabled && configServerType == 'CONSUL') { -%>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -44,14 +38,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-kubernetes-all</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-kubernetes</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-kubernetes-config</artifactId>
         </dependency>
 <% } -%>
 <%if (discoveryServerType == 'CONSUL') { -%>
@@ -108,7 +94,7 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
+            <version>3.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -119,13 +105,12 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+            <scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.junit.vintage</groupId>

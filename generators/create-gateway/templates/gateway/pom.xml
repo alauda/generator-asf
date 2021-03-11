@@ -23,19 +23,18 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
-		</dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
         </dependency>
 
-<%if (circuitBreakerEnabled || rateLimitEnabled) { -%>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
-		</dependency>
-<% } -%>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>1.6.1</version>
+        </dependency>
 <%if (configServerEnabled && configServerType == 'CONSUL') { -%>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -57,14 +56,9 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
-		</dependency>
+        </dependency>
 
 <%if (tracingEnabled) { -%>
-<!--		<dependency>-->
-<!--			<groupId>io.opentracing.contrib</groupId>-->
-<!--			<artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>-->
-<!--			<version>3.2.2</version>-->
-<!--		</dependency>-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zipkin</artifactId>
@@ -74,24 +68,23 @@
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-boot-starter</artifactId>
-			<version>3.0.0</version>
+            <version>3.0.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+        </dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
+            <scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.junit.vintage</groupId>

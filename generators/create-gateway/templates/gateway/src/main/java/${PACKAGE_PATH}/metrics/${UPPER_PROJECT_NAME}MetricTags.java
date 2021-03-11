@@ -2,6 +2,8 @@ package <%= packageName %>.metrics;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,4 +18,6 @@ public class <%= upperProjectName %>MetricTags {
     private String protocol = "http";
     @Value("${server.names}")
     private String appName;
+    public static final String GATEWAY_CLIENT_NAME = "X-Origin-Client-Name";
+    public static final String GATEWAY_CLIENT_NAMESPACE = "X-Origin-Client-Namespace";
 }
