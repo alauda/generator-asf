@@ -79,6 +79,7 @@ spring:
       config:
         sources:
           - name: ${MICRO_SERVICE_NAME}
+          - name: ${MICRO_SERVICE_NAME}-metrics-class-rules
       reload:
         enabled: true
       <%_ if (tracingEnabled) { -%>
